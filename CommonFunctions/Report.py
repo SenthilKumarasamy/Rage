@@ -10,7 +10,7 @@ from Units.Seperator import Seperator
 from Units.Reactor import Reactor
 from fpdf import FPDF
 def Report(ListUints):
-    pdf=FPDF()
+    pdf=FPDF()      
     for i in ListUints:
         pdf.add_page()
         pdf.set_font('Arial','B',10)

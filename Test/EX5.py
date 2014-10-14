@@ -1,15 +1,22 @@
+'''ElementbalanceReactor example. Solution obtained from Matlab'''
+import sys
+import os
+basepath = os.path.dirname(__file__)
+filepath = os.path.abspath(os.path.join(basepath, ".."))
+if filepath not in sys.path:
+    sys.path.append(filepath)
+
 from numpy import *
 
 from CommonFunctions.Readfile import Readfile
 from Sensor.Sensor import Sensor
 from Component.Comp import Comp
-from Reaction.Reaction import Reaction
 from Streams.Material_Stream import Material_Stream
 from Streams.Energy_Stream import Energy_Stream
 from Units.ElementBalanceReactor import ElementBalanceReactor
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
-class Test4():
+class Test5():
     def __init__(self,Ctol):   
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
@@ -20,8 +27,7 @@ class Test4():
         
         Therm=Refprop([H2,CO,CO2,H2O,CH4,C2H6])
         
-        Rxn1=Reaction('Rxn1',[CO,H2O,CO2,H2],[-1,-1,1,1])
-        Rxn2=Reaction('Rxn2',[CO,H2,CH4,H2O],[-1,-3,1,1])
+
         
         
         ListStreams=[]
@@ -88,14 +94,13 @@ class Test4():
         ListStreams.append(E)
         
         REX=ElementBalanceReactor('REX',S1,S2,[E],ExoEndoFlag=-1)
-        REX.RxnExtSol={Rxn1:2.172430394948006,Rxn2:0.350752881768548}
         ListUnits.append(REX)
         
         self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":
-    T4=Test4(1e-5)
+    T4=Test5(1e-5)
     for i in T4.OPT.ListStreams:
         if (not isinstance(i,Energy_Stream)):
             print i.FTag.Est

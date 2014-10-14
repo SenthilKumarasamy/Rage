@@ -1,3 +1,12 @@
+'''Example 1 in Data reconciliation and gross error detection book by Prof. Shankar where
+streams 3 and 4 are unmeasured.'''
+import sys
+import os
+basepath = os.path.dirname(__file__)
+filepath = os.path.abspath(os.path.join(basepath, ".."))
+if filepath not in sys.path:
+    sys.path.append(filepath)
+
 from numpy import *
 from Component.Comp import Comp
 from Thermo.Refprop import Refprop
@@ -90,3 +99,7 @@ class Test2():
         
         self.OPT=ipopt(ListStreams,ListUnits,2,5,1e-4,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
+
+#===========================================================================        
+if __name__=="__main__":
+    T2=Test2(1e-5)

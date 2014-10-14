@@ -1,3 +1,11 @@
+''' Example1 in Data Reconciliation and gross error detection book by Prof. Shankar'''
+import sys
+import os
+basepath = os.path.dirname(__file__)
+filepath = os.path.abspath(os.path.join(basepath, ".."))
+if filepath not in sys.path:
+    sys.path.append(filepath)
+
 from numpy import *
 from Component.Comp import Comp
 from Thermo.Refprop import Refprop
@@ -88,3 +96,7 @@ class Test1():
         
         self.OPT=ipopt(ListStreams,ListUnits,2,5,1e-4,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
+#=============================================================
+if __name__ == "__main__":
+    T1=Test1(1e-5)
+        

@@ -972,9 +972,9 @@ class ipopt:
             elif (isinstance(i,AdiabaticElementBalanceReactor)):
                 s=0
             elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
-                s-0
-#                 for k in i.RxnExt.keys():
-#                     i.RxnExt[k]=X[i.RxnExtXindex[k]]
+                s=0
+                for k in i.RxnExt.keys():
+                    BList.append(abs(i.RxnExt[k]-i.RxnExtSol[k]))
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater))):
                 print "Object in the list is not defined"
                 quit()   

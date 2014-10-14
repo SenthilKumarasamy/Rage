@@ -1,3 +1,9 @@
+import sys
+import os
+basepath = os.path.dirname(__file__)
+filepath = os.path.abspath(os.path.join(basepath, "..",".."))
+if filepath not in sys.path:
+    sys.path.append(filepath)
 from fpdf import FPDF
 from numpy import *
 
@@ -31,7 +37,8 @@ if __name__=="__main__":
     '------------------ Reading the Measurement file--------------------'
     #str1="C:\\Users\\admin\\workspace\\RAGE//NPLMeas09_06_14.dat"
     #str1="D:\\Gyandata\\Python\\RAGE\\NPLMeas09_06_14.dat"
-    str1="C:\\Users\\Senthil\\git\\Rage\\NPLMeas09_06_14.dat"
+    #str1="C:\\Users\\Senthil\\git\\Rage\\NPLMeas09_06_14.dat"
+    str1=filepath+"\\"+"NPLMeas09_06_14.dat"
     R1=Readfile(str1)
     '-----------------------Creating Objects--------------------------------------------'   
     
@@ -435,8 +442,8 @@ if __name__=="__main__":
     RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3])
                                  
     '''Defining REX2 (Steam Reformer) '''
-    REX2=ElementBalanceReactor('REX2',StrmNS5,StrmNS6,[E4],ExoEndoFlag=1)
-    #REX2=EquilibriumReactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
+    #REX2=ElementBalanceReactor('REX2',StrmNS5,StrmNS6,[E4],ExoEndoFlag=1)
+    REX2=EquilibriumReactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
     #REX2=Reactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
     REX2.Describe='Steam Reformer (Located inside the furnace)'
     ListUnits.append(REX2)
@@ -489,9 +496,9 @@ if __name__=="__main__":
     RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1])
                                
     '''Defining REX3 (Adiabatic Reactor) (High Temperature Shift Reactor)'''
-    REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
+    #REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
     #REX3=Reactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
-    #REX3=EquilibriumReactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
+    REX3=EquilibriumReactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
     REX3.Describe='HT Shift Reactor'
     ListUnits.append(REX3)
                              
@@ -554,8 +561,8 @@ if __name__=="__main__":
     ListStreams.append(E6)
                                  
     '''Defining REX4 (Low Temp Shift Reactor) '''
-    REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
-    #REX4=EquilibriumReactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
+    #REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
+    REX4=EquilibriumReactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
     #REX4=Reactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
     REX4.Describe='LT Shift Reactor'
     ListUnits.append(REX4)
@@ -941,45 +948,45 @@ if __name__=="__main__":
     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
     GLR1=GLR(opt1)
     Write2File(ListStreams,'GED.csv')
-    GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
-    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
-    GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
-  
-    f1=open('Residuals.csv','w') 
-    Resid=[]
-    for i in ListUnits:
-        Resid.extend(i.MaterialBalRes())
-        Resid.extend(i.ComponentBalRes())
-        f1.write(i.Name +' :'+ i.Describe + '\n')
-        f1.write('Material Balance\n')
-        f1.write(str(i.MaterialBalRes())+'\n')
-        f1.write('Component Balance\n')
-        for j in i.ComponentBalRes():
-            f1.write(str(j)+',')
-        f1.write('\n')
-        print i.Name
-        print i.MaterialBalRes(),i.ComponentBalRes()#,i.EnergyBalRes(),i.PressureBalRes()
-    f1.close()
-      
-    ToExternalUnits(ListStreams)
-    Write2File(ListStreams,'AfterDroppingGESensors.csv')
-     
-    for i in ListStreams:
-        if (isinstance(i,Energy_Stream)):
-            print i.Q.Meas,'\t',i.Q.Est
-        else:
-            if (i.FTag.Flag==1):
-                print i.FTag.Xindex,'\t',i.FTag.Tag,'\t', i.FTag.Meas,'\t', i.FTag.Est
-            #print i.TTag.Xindex,'\t',i.TTag.Tag, '\t',i.TTag.Meas,'\t', i.TTag.Est
-            #print i.PTag.Xindex,'\t',i.PTag.Tag,'\t', i.PTag.Meas, '\t',i.PTag.Est
-            if (isinstance(i,Material_Stream)):
-                for j in i.CTag.keys():
-                    if (i.CTag[j].Flag!=5):
-                        print i.CTag[j].Xindex,'\t',i.CTag[j].Tag,'\t', i.CTag[j].Meas,'\t', i.CTag[j].Est
- 
-    print'The Maximum constraint violation is ',(max(asarray(Resid)))
-    print 'Total no. of Units is ',len(ListUnits)
-    print 'Total no. of Streams is ', len(ListStreams)
-    print 'Total no. of variables is ',len(opt1.Xopt)
-    print 'Total no of Constraints is ',opt1.Glen
+#     GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
+#     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
+#     GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
+#   
+#     f1=open('Residuals.csv','w') 
+#     Resid=[]
+#     for i in ListUnits:
+#         Resid.extend(i.MaterialBalRes())
+#         Resid.extend(i.ComponentBalRes())
+#         f1.write(i.Name +' :'+ i.Describe + '\n')
+#         f1.write('Material Balance\n')
+#         f1.write(str(i.MaterialBalRes())+'\n')
+#         f1.write('Component Balance\n')
+#         for j in i.ComponentBalRes():
+#             f1.write(str(j)+',')
+#         f1.write('\n')
+#         print i.Name
+#         print i.MaterialBalRes(),i.ComponentBalRes()#,i.EnergyBalRes(),i.PressureBalRes()
+#     f1.close()
+#       
+#     ToExternalUnits(ListStreams)
+#     Write2File(ListStreams,'AfterDroppingGESensors.csv')
+#      
+#     for i in ListStreams:
+#         if (isinstance(i,Energy_Stream)):
+#             print i.Q.Meas,'\t',i.Q.Est
+#         else:
+#             if (i.FTag.Flag==1):
+#                 print i.FTag.Xindex,'\t',i.FTag.Tag,'\t', i.FTag.Meas,'\t', i.FTag.Est
+#             #print i.TTag.Xindex,'\t',i.TTag.Tag, '\t',i.TTag.Meas,'\t', i.TTag.Est
+#             #print i.PTag.Xindex,'\t',i.PTag.Tag,'\t', i.PTag.Meas, '\t',i.PTag.Est
+#             if (isinstance(i,Material_Stream)):
+#                 for j in i.CTag.keys():
+#                     if (i.CTag[j].Flag!=5):
+#                         print i.CTag[j].Xindex,'\t',i.CTag[j].Tag,'\t', i.CTag[j].Meas,'\t', i.CTag[j].Est
+#  
+#     print'The Maximum constraint violation is ',(max(asarray(Resid)))
+#     print 'Total no. of Units is ',len(ListUnits)
+#     print 'Total no. of Streams is ', len(ListStreams)
+#     print 'Total no. of variables is ',len(opt1.Xopt)
+#     print 'Total no of Constraints is ',opt1.Glen
 #     #Report(ListUnits)
