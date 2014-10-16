@@ -6,6 +6,8 @@ from EX5 import Test5
 from EX6 import Test6
 from EX7 import Test7
 from EX8 import Test8
+from EX9 import Test9
+from EX10 import Test10
 List=[]
 List.append(Test1(1e-5))
 List.append(Test2(1e-5))
@@ -15,5 +17,8 @@ List.append(Test5(1e-5))
 List.append(Test6(1e-5))
 List.append(Test7(1e-5))
 List.append(Test8(1e-5))
+List.append(Test9(1e-5))
+List.append(Test10(1e-5))
+
 for i in List:
     print i.TestResult
