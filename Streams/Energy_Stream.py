@@ -9,6 +9,6 @@ class Energy_Stream:
     def __init__(self,Name,Q1):
         self.Name=Name
         self.Q=Sensor(Q1)
-        self.Q.Flag=0
-        self.Q.Sigma=1
+        #self.Q.Flag=0
+        #self.Q.Sigma=1
 #----------------------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ from EX7 import Test7
 from EX8 import Test8
 from EX9 import Test9
 from EX10 import Test10
+from EX11 import Test11
 Ctol=1e-5
 List=[]
 List.append(Test1(Ctol))
@@ -20,6 +21,7 @@ List.append(Test7(Ctol))
 List.append(Test8(Ctol))
 List.append(Test9(Ctol))
 List.append(Test10(Ctol))
+List.append(Test11(Ctol))
 
 for i in List:
     print i.TestResult

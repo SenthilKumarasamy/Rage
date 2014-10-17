@@ -21,6 +21,7 @@ from Units.HeatExchanger import HeatExchanger
 from Units.Seperator import Seperator
 from Units.Reactor import Reactor
 from Units.Mixer import Mixer
+from Units.Pump import Pump
 
 class ipopt:
 #     ListStreams=[]
@@ -181,7 +182,7 @@ class ipopt:
                     self.X.append(i.RxnExt[j])
                     self.Sigma.append(1)
 
-            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater))):
+            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
                 quit()
     #-------------------------------------------------------------------
@@ -621,6 +622,10 @@ class ipopt:
             elif (isinstance(i,Mixer)):
                 InletStream.extend(i.output)
                 OutletStream.extend(i.input)
+            elif (isinstance(i,Pump)):
+                InletStream.append(i.Inlet)
+                OutletStream.append(i.Outlet)
+                EnergyStream.append(i.Qstrm)
             elif (isinstance(i,Seperator)):
                 InletStream.extend(i.input)
                 OutletStream.extend(i.output)
@@ -673,32 +678,32 @@ class ipopt:
             exit()
             
         ''' Checking the Energy Streams'''
-        Dic=Con.Counter(EnergyStream)
- 
-        for i in Dic.keys():
-            if (Dic[i]==1):
-                if (i.Q.Flag!=2):
-                    print 'Either Source or Sink of the Energy Stream ',i.Name,' is not defined'
-                    print i.Q.Meas,i.Q.Flag
-                    exit()
-            elif (Dic[i]==2):
-                EEFlag=[0]*2
-                cont=0
-                for ind,j in enumerate(EnergyStream):
-                    if (i==j):
-                        EEFlag[cont]=EnergyFlag[ind]
-                        cont=cont+1
-                if (EEFlag[0]==1 and EEFlag[1]==1):
-                    print 'Energy Stream ', i.Name, ' is connecting to two sinks'
-                    exit()
-                elif (EEFlag[0]==-1 and EEFlag[1]==-1):
-                    print 'Energy Stream ', i.Name, ' is connecting to two sources'
-                    exit()
-            else:
-                print 'Energy Stream ',i.Name,' is associated with more than two units'
-                exit()
-                
-#-----------------------------Methods called several times by the optimiser-----------
+#         Dic=Con.Counter(EnergyStream)
+#  
+#         for i in Dic.keys():
+#             if (Dic[i]==1):
+#                 if (i.Q.Flag!=2):
+#                     print 'Either Source or Sink of the Energy Stream ',i.Name,' is not defined'
+#                     print i.Q.Meas,i.Q.Flag
+#                     exit()
+#             elif (Dic[i]==2):
+#                 EEFlag=[0]*2
+#                 cont=0
+#                 for ind,j in enumerate(EnergyStream):
+#                     if (i==j):
+#                         EEFlag[cont]=EnergyFlag[ind]
+#                         cont=cont+1
+#                 if (EEFlag[0]==1 and EEFlag[1]==1):
+#                     print 'Energy Stream ', i.Name, ' is connecting to two sinks'
+#                     exit()
+#                 elif (EEFlag[0]==-1 and EEFlag[1]==-1):
+#                     print 'Energy Stream ', i.Name, ' is connecting to two sources'
+#                     exit()
+#             else:
+#                 print 'Energy Stream ',i.Name,' is associated with more than two units'
+#                 exit()
+#                 
+# #-----------------------------Methods called several times by the optimiser-----------
     
     def Objective(self,X,user_data=None):
         assert len(X)==self.Xlen
@@ -896,7 +901,8 @@ class ipopt:
             elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
                 for k in i.RxnExt.keys():
                     i.RxnExt[k]=X[i.RxnExtXindex[k]]
-            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater))):
+            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
+                print 'here'
                 print "Object in the list is not defined"
                 quit()   
     
@@ -939,7 +945,7 @@ class ipopt:
             elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
                 for k in i.RxnExt.keys():
                     i.RxnExt[k]=X[i.RxnExtXindex[k]]
-            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater))):
+            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
                 quit()   
     
@@ -975,7 +981,7 @@ class ipopt:
                 s=0
                 for k in i.RxnExt.keys():
                     BList.append(abs(i.RxnExt[k]-i.RxnExtSol[k]))
-            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater))):
+            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
                 quit()   
         self.Pass=all(BList)

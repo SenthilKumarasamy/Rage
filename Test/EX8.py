@@ -100,14 +100,91 @@ class Test8():
         REX.RxnExtSol={Rxn1:1.771793249311506,Rxn2:0.206078306042207}
         ListUnits.append(REX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
+        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":
-    T4=Test8(1e-5)
+#     T4=Test8(1e-2)
+#     for i in T4.OPT.ListStreams:
+#         if (not isinstance(i,Energy_Stream)):
+#             print i.FTag.Est
+#             for j in i.CTag.keys():
+#                 print j.Name[:-4],i.CTag[j].Est
+#     print T4.TestResult
+    Ctol=1e-3
+    T4=Test8(Ctol)
     for i in T4.OPT.ListStreams:
         if (not isinstance(i,Energy_Stream)):
-            print i.FTag.Est
+            print i.FTag.Est, abs(i.FTag.Est-i.FTag.Sol)<Ctol
             for j in i.CTag.keys():
-                print j.Name[:-4],i.CTag[j].Est
-    print T4.TestResult 
+                print j.Name[:-4],i.CTag[j].Est,abs(i.CTag[j].Est-i.CTag[j].Sol)<Ctol
+    i=T4.OPT.ListUints[0]
+    print i.RxnExt[i.Rxn[0]],i.RxnExt[i.Rxn[1]],abs(i.RxnExtSol[i.Rxn[0]]-i.RxnExt[i.Rxn[0]])<Ctol,abs(i.RxnExtSol[i.Rxn[1]]-i.RxnExt[i.Rxn[1]])<Ctol
+    print T4.TestResult  
+#====================Matlab Code========================================
+'''
+function [Xopt,Fval,Flag]=ExtentReactionReactorDryBasis()
+    FlowR=12.11;
+    COR=0.32;
+    H2OR=0.35/(1-COR);
+    CO2R=0.09/(1-COR);
+    H2R=0.085/(1-COR);
+    CH4R=0.084/(1-COR);
+    C2H6R=0.087/(1-COR);
+    FlowP=11.95;
+    COP=0.07;
+    H2OP=0.25;
+    CO2P=0.22;
+    H2P=0.22;
+    CH4P=0.17;
+    C2H6P=0.08;
+    Xmeas=[FlowR;COR;H2OR;CO2R;H2R;CH4R;C2H6R;FlowP;COP;H2OP;CO2P;H2P;CH4P;C2H6P;2.1;1.2];
+    XFlag=ones(16,1);
+    XFlag([2,15,16])=0;
+    opt=optimset('algorithm','interior-point','display','iter');
+    [Xopt,Fval,Flag]=fmincon(@obj,Xmeas,[],[],[],[],zeros(11,0),[],@Cons,opt,Xmeas,XFlag);
+end
+function f=obj(X,Xmeas,XFlag)
+    Sigma=0.01*Xmeas;
+    COR=X(2);
+    f=XFlag(1)*((X(1)-Xmeas(1))/Sigma(1))^2;
+    for i=3:7
+        f=f+XFlag(i)*((X(i)/(1-COR)-Xmeas(i))/Sigma(i))^2;
+    end
+    for i=8:14
+        f=f+XFlag(i)*((X(i)-Xmeas(i))/Sigma(i))^2;
+    end
+end
+function [C,Ceq] = Cons(X,Xmeas,XFlag)
+    % CO + H2O ------> CO2  +  H2
+    % CO + 3H2 ------> CH4  +  H2O
+    FlowR=X(1);
+    COR=X(2);
+    H2OR=X(3);
+    CO2R=X(4);
+    H2R=X(5);
+    CH4R=X(6);
+    C2H6R=X(7);
+    FlowP=X(8);
+    COP=X(9);
+    H2OP=X(10);
+    CO2P=X(11);
+    H2P=X(12);
+    CH4P=X(13);
+    C2H6P=X(14);
+    Ext1=X(15);
+    Ext2=X(16);
+
+    C1=FlowR * COR - FlowP * COP - Ext1 - Ext2; % CO balance
+    C2=FlowR*H2OR - FlowP*H2OP - Ext1 + Ext2; % H2O Balance
+    C3=FlowR*CO2R - FlowP*CO2P + Ext1; % CO2 Balance
+    C4=FlowR*H2R - FlowP*H2P + Ext1 -3*Ext2; % H2 Balance
+    C5=FlowR*CH4R - FlowP*CH4P +Ext2; % CH4 Balance
+    C6=FlowR*C2H6R - FlowP*C2H6P; % C2H6 Balance
+    C7=COR+H2OR+CO2R+H2R+CH4R+C2H6R-1.0;
+    C8=COP+H2OP+CO2P+H2P+CH4P+C2H6P-1.0;
+
+    Ceq=[C1;C2;C3;C4;C5;C6;C7;C8];
+    C=[];
+end
+'''

@@ -15,6 +15,7 @@ from Units.Splitter import Splitter
 from Units.Mixer import Mixer
 from optim.ipopt import ipopt
 
+
 class Test1():
     def __init__(self,Ctol):
 
@@ -94,9 +95,39 @@ class Test1():
         MIX=Mixer('MIX',[S5,S4],S6)
         ListUnits.append(MIX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,2,5,1e-4,iter=5000)
+        self.OPT=ipopt(ListStreams,ListUnits,1,5,1e-12,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #=============================================================
 if __name__ == "__main__":
     T1=Test1(1e-5)
+    for i in T1.OPT.ListStreams:
+        print i.FTag.Est
+    print T1.TestResult 
+#==========Matlab Code===================================
+'''
+function [Xopt,Fval,Flag]=FlowExample()
+    F1=101.91;
+    F2=64.45;
+    F3=34.65;
+    F4=64.20;
+    F5=36.44;
+    F6=98.88;
+    Xmeas=[F1;F2;F3;F4;F5;F6];
+    XFlag=ones(6,1);
+    opt=optimset('algorithm','interior-point','display','iter');
+    [Xopt,Fval,Flag]=fmincon(@obj,Xmeas,[],[],[],[],zeros(6,0),[],@Cons,opt,Xmeas,XFlag);
+end
+function f=obj(X,Xmeas,XFlag)
+    f=sum(((X-Xmeas).^2).*XFlag);
+end
+function [c,ceq]=Cons(X,Xmeas,XFlag)
+    F1=X(1);F2=X(2);F3=X(3);F4=X(4);F5=X(5);F6=X(6);
+    C1=F1-F2-F3;
+    C2=F2-F4;
+    C3=F3-F5;
+    C4=F6-F5-F4;
+    ceq=[C1;C2;C3;C4];
+    c=[];
+end
+'''
         
