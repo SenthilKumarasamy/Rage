@@ -97,6 +97,7 @@ class ipopt:
 #--------------------------Methods called once during initialisation of the object-------------    
     def ConstructXFlag(self):
         self.XFlag=[]
+        self.FBFlag=[]
         if (self.CFlag in [1,2,5]):
             self.MakeTPconstant()
         for i in self.ListStreams:
@@ -106,6 +107,7 @@ class ipopt:
                         self.XFlag.append(1)
                     else:
                         self.XFlag.append(0)
+                    self.FBFlag.append(0)
                     i.FTag.Xindex=len(self.XFlag)-1
                     self.X.append(i.FTag.Meas)
                     self.Sigma.append(i.FTag.Sigma)
@@ -115,6 +117,7 @@ class ipopt:
                         self.XFlag.append(1)
                     else:
                         self.XFlag.append(0)
+                    self.FBFlag.append(0)
                     i.TTag.Xindex=len(self.XFlag)-1
                     self.X.append(i.TTag.Meas)
                     self.Sigma.append(i.TTag.Sigma)
@@ -124,6 +127,7 @@ class ipopt:
                         self.XFlag.append(1)
                     else:
                         self.XFlag.append(0)
+                    self.FBFlag.append(0)
                     i.PTag.Xindex=len(self.XFlag)-1
                     self.X.append(i.PTag.Meas)
                     self.Sigma.append(i.PTag.Sigma)
@@ -132,8 +136,13 @@ class ipopt:
                     if (i.CTag[val].Flag!=2):
                         if (i.CTag[val].Flag!=0):
                             self.XFlag.append(1)
+                            if (i.FreeBasis!=[]):
+                                self.FBFlag.append(i.CTag[i.FreeBasis[0]])
+                            else:
+                                self.FBFlag.append(0)
                         else:
                             self.XFlag.append(0)
+                            self.FBFlag.append(0)
                         i.CTag[val].Xindex=len(self.XFlag)-1
                         self.X.append(i.CTag[val].Meas)
                         if (i.CTag[val].Sigma==0.0):
@@ -148,6 +157,7 @@ class ipopt:
                         self.XFlag.append(1)
                     else:
                         self.XFlag.append(0)
+                    FBFlag.append(0)
                     i.Q.Xindex=len(self.XFlag)-1
                     self.X.append(i.Q.Meas)
                     self.Sigma.append(i.Q.Sigma) # Q is always unmeasured and sigma doesnot affect the objective as flag is zero
@@ -173,6 +183,7 @@ class ipopt:
                     i.RxnExtXindex[j]=len(self.XFlag)-1
                     self.X.append(i.RxnExt[j])
                     self.Sigma.append(1)
+                    self.FBFlag.append(0)
                 s=0
                 
             elif (isinstance(i,Reactor)     or isinstance(i,EquilibriumReactor)):
@@ -181,6 +192,7 @@ class ipopt:
                     i.RxnExtXindex[j]=len(self.XFlag)-1
                     self.X.append(i.RxnExt[j])
                     self.Sigma.append(1)
+                    self.FBFlag.append(0)
 
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
@@ -987,6 +999,43 @@ class ipopt:
         self.Pass=all(BList)
         return self.Pass
         
+    def CompareEstSolPercent(self,Ctol):
+        X=self.Xopt
+        BList=[]
+        for i in self.ListStreams:
+            if (isinstance(i,Material_Stream) or isinstance(i,FixedConcStream)):
+                if (i.FTag.Flag!=2):
+                    BList.append(abs((i.FTag.Est-i.FTag.Sol)*100.0/i.FTag.Sol)<Ctol)
+                if (i.TTag.Flag!=2):
+                    BList.append(abs((i.TTag.Est-i.TTag.Sol)*100.0/i.TTag.Est)<Ctol)
+                if (i.PTag.Flag!=2):
+                    BList.append(abs((i.PTag.Est-i.PTag.Sol)*100.0/i.PTag.Est)<Ctol)
+                    
+                for k in i.CTag.keys():
+                    if (i.CTag[k].Flag!=2):
+                        BList.append(abs((i.CTag[k].Est-i.CTag[k].Sol)*100.0/i.CTag[k].Sol)<Ctol)
+                        
+            elif(isinstance(i,Energy_Stream)):
+                if (i.Q.Flag !=2):
+                    BList.append(abs((i.Q.Est-i.Q.Sol)*100.0/i.Q.Sol)<Ctol)
+            
+        for i in self.ListUints:
+            if (isinstance(i,HeatExchanger)):
+#                 i.U=X[i.UXindex]
+                s=0
+            elif (isinstance(i,ElementBalanceReactor)):
+                s=0
+            elif (isinstance(i,AdiabaticElementBalanceReactor)):
+                s=0
+            elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
+                s=0
+                for k in i.RxnExt.keys():
+                    BList.append(abs((i.RxnExt[k]-i.RxnExtSol[k])*100.0/i.RxnExtSol[k])<Ctol)
+            elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
+                print "Object in the list is not defined"
+                quit()   
+        self.Pass=all(BList)
+        return self.Pass
 
     
     def MakeTPconstant(self):

@@ -17,7 +17,9 @@ from Units.Seperator import Seperator
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
 class Test11():
-    def __init__(self,Ctol):   
+    def __init__(self,Ctol):
+        self.Description='Separator example. Solution obtained by solving in Matlab'
+        self.Type=5   
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
                 
@@ -75,7 +77,7 @@ class Test11():
         SEP=Seperator('SEP',S1,[S2,S3])
         ListUnits.append(SEP)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-8,iter=500)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":

@@ -18,7 +18,9 @@ from Units.Reactor import Reactor
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
 class Test4():
-    def __init__(self,Ctol):   
+    def __init__(self,Ctol):
+        self.Description='Extent of Reaction Reactor solved  with Matlab'
+        self.Type=5   
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
         CO2=Comp(2,StdState=2)
@@ -99,7 +101,7 @@ class Test4():
         REX.RxnExtSol={Rxn1:2.172430394948006,Rxn2:0.350752881768548}
         ListUnits.append(REX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-10,iter=5000)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-10,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":

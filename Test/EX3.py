@@ -18,7 +18,8 @@ from optim.ipopt import ipopt
 
 class Test3():
     def __init__(self,Ctol):
-
+        self.Description='Example 1 in Data reconciliation and gross error detection book by Prof. Shankar where streams 3,4,5 and 6 are unmeasured.'
+        self.Type=1
         H2O=Comp(7,StdState=1)
         Therm=Refprop([H2O])
         
@@ -99,7 +100,7 @@ class Test3():
         MIX=Mixer('MIX',[S5,S4],S6)
         ListUnits.append(MIX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,1,5,1e-12,iter=5000)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-12,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #======================================
 if __name__ == "__main__":

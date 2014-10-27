@@ -17,7 +17,9 @@ from Units.HeatExchanger import HeatExchanger
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
 class Test10():
-    def __init__(self,Ctol):   
+    def __init__(self,Ctol):
+        self.Description='Heat Exchanger Example. Solution obtained from Matlab'
+        self.Type=5   
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
                 
@@ -89,7 +91,7 @@ class Test10():
         HEX=HeatExchanger('HEX',S1,S2,S3,S4)
         ListUnits.append(HEX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-12,iter=500)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-12,iter=500)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":

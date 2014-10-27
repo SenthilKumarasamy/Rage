@@ -18,7 +18,9 @@ from Units.ElementBalanceReactor import ElementBalanceReactor
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
 class Test7():
-    def __init__(self,Ctol):   
+    def __init__(self,Ctol):
+        self.Description='ElementbalanceReactor example where the concentration of the reactant stream is measured in CO free basis. Solution obtained from Matlab'   
+        self.Type=5
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
         CO2=Comp(2,StdState=2)
@@ -95,7 +97,7 @@ class Test7():
         REX=ElementBalanceReactor('REX',S1,S2,[E],ExoEndoFlag=-1)
         ListUnits.append(REX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-12,iter=500)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-12,iter=500)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":

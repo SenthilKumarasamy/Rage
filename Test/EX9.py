@@ -17,7 +17,9 @@ from Units.Heater import Heater
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
 class Test9():
-    def __init__(self,Ctol):   
+    def __init__(self,Ctol):
+        self.Description='Heater example. Solution obtained from Matlab'
+        self.Type=5   
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
                 
@@ -68,7 +70,7 @@ class Test9():
         HET=Heater('HET',S1,S2,E)
         ListUnits.append(HET)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-12,iter=500)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-12,iter=500)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":

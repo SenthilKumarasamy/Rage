@@ -15,10 +15,12 @@ from Streams.FixedConcStream import FixedConcStream
 from Units.Splitter import Splitter
 from Units.Mixer import Mixer
 from optim.ipopt import ipopt
+from GrossErrorDetection.GLRTest import GLR
 
 class Test2():
     def __init__(self,Ctol):
-
+        self.Description='Example 1 in Data reconciliation and gross error detection book by Prof. Shankar where streams 3 and 4 are unmeasured.'
+        self.Type=1
         H2O=Comp(7,StdState=1)
         Therm=Refprop([H2O])
         
@@ -97,8 +99,9 @@ class Test2():
         MIX=Mixer('MIX',[S5,S4],S6)
         ListUnits.append(MIX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,1,5,1e-12,iter=5000)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-12,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
+        self.GLR1=GLR(self.OPT)
 
 #===========================================================================        
 if __name__ == "__main__":

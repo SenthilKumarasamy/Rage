@@ -2,9 +2,12 @@ from numpy import zeros
 from numpy import shape
 from numpy import asarray
 from numpy.linalg import qr
-from numpy.linalg import pinv
+from numpy.linalg import inv
 from numpy.linalg import matrix_rank
 from numpy import dot
+from numpy import bmat
+from numpy import mat
+from numpy import eye
 from scipy.stats import chi2
 
 from Streams.Material_Stream import Material_Stream
@@ -21,13 +24,17 @@ class GLR():
         self.A,self.B=self.ExtractAB(self.opt.Glen,self.Acol,self.Bcol,self.Jac,self.opt.XFlag)
         self.Xm,self.Xu,self.XmIndex = self.ExtractXmXu(self.Acol,self.Bcol,self.opt.XFlag,self.opt.Xopt)
         self.Xmeas=self.ExtractXmeas(self.opt.Xmeas, self.XmIndex)
+        self.G=self.FunctionG(self.Xm, self.XmIndex, self.opt.FBFlag)
+        self.J=self.GradientG(self.Xm, self.XmIndex, self.opt.FBFlag)
+        self.Abar,self.bbar=self.ComputeMatrixM(self.A, self.B, self.G,self.J,self.Xm,self.Xu)
         
-        self.P=self.ComputeProjectionMatrix(self.B,self.Bcol,self.opt.Glen)
-        self.Abar,self.bbar=self.ComputeAbarbbar(self.A,self.B,self.Xm,self.Xu,self.P)
+        #self.P=self.ComputeProjectionMatrix(self.B,self.Bcol,self.opt.Glen)
+        #self.Abar,self.bbar=self.ComputeAbarbbar(self.A,self.B,self.Xm,self.Xu,self.P)
         self.Sigma=self.ExtractSigma(self.opt.Sigma,self.XmIndex)
         
         self.GLRFlag=zeros((len(self.opt.Xopt)))
         self.r,self.Vinv=self.ComputeRVinv(self.Abar,self.bbar,self.Xmeas,self.Sigma)
+        #self.r,self.Vinv=self.ComputeRVinv(self.Abar,self.bbar,self.Xm,self.Sigma)
         self.Detectable,self.NotDetectable=self.MakeList(self.Abar)
         self.n=matrix_rank(self.Abar)
         self.T0=self.ComputeGlobalStatistic(self.r,self.Vinv,0.0)
@@ -38,6 +45,7 @@ class GLR():
         Result=True
         while(Result):
             Result=self.GlobalTest(self.Ti,self.n)
+            print 'Result of Global Test',Result
             if (Result):
                 ErrPos,Tk=self.DetectGEPosition(self.r,self.Vinv,self.Abar,self.Detected,self.ToBeTested)
                 self.Detected,self.ToBeTested=self.UpdateList(self.Detected,self.ToBeTested,ErrPos)
@@ -103,10 +111,56 @@ class GLR():
         return Xmeas
     
     def ExtractSigma(self,YSigma,XmIndex):
-        Sigma=zeros((len(XmIndex),len(XmIndex)))
+        Sigma=mat(zeros((len(XmIndex),len(XmIndex))))
         for ind,i in enumerate(XmIndex):
             Sigma[ind,ind]=YSigma[i]
         return Sigma
+    
+    def FunctionG(self,Xm,XmIndex,FBFlag):
+        G=zeros((len(XmIndex),1))
+        for ind,i in enumerate(XmIndex):
+            if (FBFlag[i]==0):
+                G[ind]=Xm[ind]
+            else:
+                G[ind]=Xm[ind]/(1.0-FBFlag[i].Est)
+        return G
+    
+    def GradientG(self,Xm,XmIndex,FBFlag):
+        J=zeros((len(Xm),len(Xm)))
+        for ind,i in enumerate(XmIndex):
+            if (FBFlag[XmIndex[ind]]==0):
+                J[ind][ind]=1.0
+            else:
+                J[ind][ind]=1.0/(1.0-FBFlag[XmIndex[ind]].Est)
+                ''' The following three lines of is effective if the Free Basis component is measured. 
+                    Presently, it is forced to be unmeasured while declarine the concerned stream'''
+                if (FBFlag[XmIndex[ind]].Flag==1):
+                    ind1=XmIndex.index(FBFlag[XmIndex[ind]])
+                    J[ind][ind1]=Xm[ind]/(1.0-FBFlag[XmIndex[ind]].Est)**2
+        return J
+    
+    def ComputeMatrixM(self,A,B,G,J,Xm,Xu):
+        SizeA=A.shape
+        SizeB=B.shape
+        SizeD=J.shape
+        NrowZ=SizeD[0]
+        NcolZ=SizeB[1]
+        Z=mat(zeros((NrowZ,NcolZ)))
+        BM=bmat([[A,B],[-J,Z]])
+        q,r=qr(BM,mode='complete')
+        NrowBM=SizeA[0]+SizeD[0]
+        NcolBM=SizeA[1]+SizeB[1]
+        P=q[:,NcolBM:NrowBM]
+        self.P=P.T
+        Z1=mat(zeros((SizeA[0],SizeD[0])))
+        E1=mat(eye(SizeD[0]))
+        M1=bmat([[Z1],[E1]])
+        Abar=dot(P.T,M1)
+        c=dot(A,mat(Xm).T)+dot(B,mat(Xu).T)
+        d=G-dot(J,mat(Xm).T)
+        bbar=dot(P.T,bmat([[c],[d]]))
+        return Abar,bbar
+
         
     def ComputeProjectionMatrix(self,B,Bcol,Glen):
         q,r=qr(B,mode='complete')
@@ -116,16 +170,16 @@ class GLR():
 #             exit()
         return P.T
     
-    def ComputeAbarbbar(self,A,B,Xm,Xu,P):
-        b=dot(A,Xm)+dot(B,Xu)
-        Abar=dot(P,A)
-        bbar=dot(P,b)
-        return Abar,bbar
+#     def ComputeAbarbbar(self,A,B,Xm,Xu,P):
+#         b=dot(A,Xm)+dot(B,Xu)
+#         Abar=dot(P,A)
+#         bbar=dot(P,b)
+#         return Abar,bbar
     
     def ComputeRVinv(self,Abar,bbar,Xmeas,Sigma):
-        r=dot(Abar,Xmeas)-bbar
+        r=dot(Abar,mat([Xmeas]).T)-bbar
         V=dot(dot(Abar,Sigma),Abar.T)
-        Vinv=pinv(V)
+        Vinv=inv(V)
         return r,Vinv
     
     def MakeList(self,Abar):
@@ -151,6 +205,7 @@ class GLR():
     
     def GlobalTest(self,T,n):
         Tcrit=chi2.ppf(0.05,n)
+        print 'Inside Global Test, T, Tcrit', T, Tcrit
         if (T>Tcrit):
             GTResult=True
         else:
@@ -161,13 +216,13 @@ class GLR():
     def DetectGEPosition(self,r,Vinv,Abar,Detected,ToBeTested):
         Fk=Abar[:,Detected]
         s=shape(Fk)
-        Fki=zeros((s[0],s[1]+1))
+        Fki=mat(zeros((s[0],s[1]+1)))
         Fki[:,range(s[1])]=Fk
         GLRStatistic=[0]*len(ToBeTested)
         for ind,i in enumerate(ToBeTested):
             Fki[:,s[1]]=Abar[:,i]
             FTemp=dot(dot(Fki.T,Vinv),r)
-            FTemp1=pinv(dot(dot(Fki.T,Vinv),Fki))
+            FTemp1=inv(dot(dot(Fki.T,Vinv),Fki))
             GLRStatistic[ind]=dot(dot(FTemp.T,FTemp1),FTemp)
             ErrPos=GLRStatistic.index(max(GLRStatistic))
         return ErrPos,GLRStatistic[ErrPos]

@@ -19,7 +19,9 @@ from Units.Reactor import Reactor
 from optim.ipopt import ipopt
 from Thermo.Refprop import Refprop
 class Test8():
-    def __init__(self,Ctol):   
+    def __init__(self,Ctol):
+        self.Description='Extent of reaction reactor example where the concentration of the reactant stream is measured in CO free basis. Solution obtained from Matlab'   
+        self.Type=5
         H2=Comp(4,StdState=2)
         CO=Comp(1,StdState=2)
         CO2=Comp(2,StdState=2)
@@ -100,7 +102,7 @@ class Test8():
         REX.RxnExtSol={Rxn1:1.771793249311506,Rxn2:0.206078306042207}
         ListUnits.append(REX)
         
-        self.OPT=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=5000)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-8,iter=5000)
         self.TestResult=self.OPT.CompareEstSol(Ctol)
 #===============================================================================
 if __name__=="__main__":

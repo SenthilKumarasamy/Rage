@@ -127,7 +127,7 @@ if __name__=="__main__":
     PUMP1=Pump('PUMP1', LiqLow, LiqHigh, QStream)
     ListUnits.append(PUMP1)
   
-    opt1=ipopt(ListStreams,ListUnits,7,5,Xtol=1e-8,iter=100)
+    opt1=ipopt(ListStreams,ListUnits,5,5,Xtol=1e-8,iter=100)
 
 print 'Energy'
 print QStream.Q.Meas, QStream.Q.Est, QStream.Q.Sigma
