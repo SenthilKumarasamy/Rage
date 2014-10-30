@@ -10,6 +10,10 @@ from EX9 import Test9
 from EX10 import Test10
 from EX11 import Test11
 from EX12 import Test12
+from EX13 import Test13
+from EX14 import Test14
+from EX15 import Test15
+from EX16 import Test16
 Ctol=1e-5
 Ptol=1.0
 List=[]
@@ -25,6 +29,10 @@ List.append(Test9(Ctol))
 List.append(Test10(Ctol))
 List.append(Test11(Ctol))
 List.append(Test12(Ctol,Ptol))
+List.append(Test13(Ctol,Ptol))
+List.append(Test14(Ctol,Ptol))
+List.append(Test15(Ctol,Ptol))
+List.append(Test16(Ctol,Ptol))
 
 for ind,i in enumerate(List):
     print '=============================================================================================================================================================================='
@@ -60,5 +68,4 @@ for ind,i in enumerate(List):
             print '         : The objective function value at optimum of python code is equal than that of Matlab'
         print '         : Python objective function value at optimum is ',i.OPT.obj
         print '         : MatLab objective function value at optimum is ',i.OPT.ObjSol 
-                
 print '===================================================================================================================================================================================='

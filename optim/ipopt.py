@@ -157,7 +157,7 @@ class ipopt:
                         self.XFlag.append(1)
                     else:
                         self.XFlag.append(0)
-                    FBFlag.append(0)
+                    self.FBFlag.append(0)
                     i.Q.Xindex=len(self.XFlag)-1
                     self.X.append(i.Q.Meas)
                     self.Sigma.append(i.Q.Sigma) # Q is always unmeasured and sigma doesnot affect the objective as flag is zero
@@ -976,6 +976,9 @@ class ipopt:
                 for k in i.CTag.keys():
                     if (i.CTag[k].Flag!=2):
                         BList.append(abs(i.CTag[k].Est-i.CTag[k].Sol)<Ctol)
+#                         if (not (abs(i.CTag[k].Est-i.CTag[k].Sol)<Ctol)):
+#                             print i.Name,k.Name
+#                             print i.CTag[k].Est,i.CTag[k].Sol
                         
             elif(isinstance(i,Energy_Stream)):
                 if (i.Q.Flag !=2):
@@ -995,7 +998,8 @@ class ipopt:
                     BList.append(abs(i.RxnExt[k]-i.RxnExtSol[k]))
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
-                quit()   
+                quit()
+        print BList   
         self.Pass=all(BList)
         return self.Pass
         

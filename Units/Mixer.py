@@ -54,6 +54,7 @@ class Mixer(Seperator):
         else:
             print 'The number of Components in the inlet and outlet streams are not matching in the Mixer ',self.Name
             exit()
+    
     def PressureBalRes(self):
         Resid = []
         sumP = 0

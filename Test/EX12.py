@@ -117,11 +117,13 @@ if __name__=="__main__":
     T4=Test12(1e-5,1)
     for i in T4.OPT.ListStreams:
         if (not isinstance(i,Energy_Stream)):
-            print i.FTag.Est, i.FTag.Flag, i.FTag.Sigma
-            print i.TTag.Est, i.TTag.Flag, i.TTag.Sigma
-            print 'Pressure',i.PTag.Est,i.PTag.Meas
+            print '============================'
+            print 'Stream Name:',i.Name
+            print 'Flow:', i.FTag.Est, i.FTag.Meas
+            print 'Temp: ',i.TTag.Est, i.TTag.Meas
+            print 'Press: ',i.PTag.Est,i.PTag.Meas
             for j in i.CTag.keys():
-                print j.Name[:-4],i.CTag[j].Est,i.CTag[j].Flag,i.CTag[j].Sigma
+                print j.Name[:-4],i.CTag[j].Est,i.CTag[j].Meas
     print '======================================='
     print T4.TestResult 
     print T4.TestResultPercentage
