@@ -995,7 +995,7 @@ class ipopt:
             elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
                 s=0
                 for k in i.RxnExt.keys():
-                    BList.append(abs(i.RxnExt[k]-i.RxnExtSol[k]))
+                    BList.append(abs(i.RxnExt[k]-i.RxnExtSol[k])<Ctol)
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
                 quit()
@@ -1049,6 +1049,7 @@ class ipopt:
                 i.PTag.Flag=2
             else:
                 i.Q.Flag=2
+    
                 
     def NumGrad(self,X):
         SumG=zeros((self.Xlen),dtype=float_)

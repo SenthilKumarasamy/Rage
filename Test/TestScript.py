@@ -14,6 +14,11 @@ from EX13 import Test13
 from EX14 import Test14
 from EX15 import Test15
 from EX16 import Test16
+from EX17 import Test17
+from EX18 import Test18
+from EX19 import Test19
+from EX20 import Test20
+from EX21 import Test21
 Ctol=1e-5
 Ptol=1.0
 List=[]
@@ -33,6 +38,11 @@ List.append(Test13(Ctol,Ptol))
 List.append(Test14(Ctol,Ptol))
 List.append(Test15(Ctol,Ptol))
 List.append(Test16(Ctol,Ptol))
+List.append(Test17(Ctol,Ptol))
+List.append(Test18(Ctol,Ptol))
+List.append(Test19(Ctol,Ptol))
+List.append(Test20(Ctol,Ptol))
+List.append(Test21(Ctol,Ptol))
 
 for ind,i in enumerate(List):
     print '=============================================================================================================================================================================='
