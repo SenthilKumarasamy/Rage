@@ -116,3 +116,136 @@ if __name__=="__main__":
     if (not T1.TestResult):
             print T1.TestResultPercentage 
 #=================MatLab Code=============================== 
+'''
+function [Xopt,Fval,Flag]=EquilibriumReactorWithTwoReactions()
+    FR=11.2;
+    TR=530;
+    PR=106;
+    CO_R=0.41;
+    H2O_R=0.25;
+    H2_R=0.35;
+    
+    FP=8.8;
+    TP=564;
+    PP=106;
+    CO_P=0.14;
+    H2O_P=0.21;
+    CO2_P=0.25;
+    H2_P=0.28;
+    CH4_P=0.14;
+    
+    Q=337000;
+    Ext1=2.18;
+    Ext2=1.2;
+    Xmeas=[FR;TR;PR;CO_R;H2O_R;H2_R;FP;TP;PP;CO_P;H2O_P;CO2_P;H2_P;CH4_P;Q;Ext1;Ext2];
+    XFlag=ones(17,1);
+    XFlag([15,16,17])=0;
+    LB=zeros(17,1);
+    UB=ones(17,1)*inf;
+    UB([4,5,6,10,11,12,13,14])=1;
+    opt=optimset('algorithm','interior-point','display','iter');
+    [Xopt,Fval,Flag]=fmincon(@obj,Xmeas,[],[],[],[],LB,UB,@Cons,opt,Xmeas,XFlag);
+end
+function f=obj(X,Xmeas,XFlag)
+    Sigma=0.01*Xmeas;
+    f=sum((((X-Xmeas)./Sigma).^2).*XFlag);
+end
+function [C,Ceq] = Cons(X,Xmeas,XFlag)
+    % CO + H2O -----> CO2 + H2
+    % CO + H2 ------> CH4 + H2O
+    FR=X(1);
+    TR=X(2);
+    PR=X(3);
+    CO_R=X(4);
+    H2O_R=X(5);
+    H2_R=X(6);
+    
+    FP=X(7);
+    TP=X(8);
+    PP=X(9);
+    CO_P=X(10);
+    H2O_P=X(11);
+    CO2_P=X(12);
+    H2_P=X(13);
+    CH4_P=X(14);
+    
+    Q=X(15);
+    Ext1=X(16);
+    Ext2=X(17);
+    C1=FR*CO_R - Ext1 - Ext2 - FP*CO_P; % CO balance
+    C2=FR*H2O_R - Ext1 + Ext2 - FP*H2O_P; % H2O Balance
+    C3= -FP*CO2_P + Ext1; % CO2 Balance
+    C4=FR*H2_R + Ext1 - 3*Ext2 - FP*H2_P; % H2 Balance
+    C5= -FP*CH4_P + Ext2;
+    C6=CO_R + H2O_R + H2_R -1.0; % Normalization
+    C7=CO_P + H2O_P + CO2_P + H2_P  +CH4_P - 1.0; % Normalization
+    HosR=OffSetR(CO_R,H2O_R,H2_R);
+    HR=refpropm('H<','T',TR+273,'P',PR,'CO','water','CO2','hydrogen','methane',[CO_R,H2O_R,0,H2_R,0])+HosR;
+    HosP=OffSetP(CO_P,H2O_P,CO2_P,H2_P,CH4_P);
+    HP=refpropm('H<','T',TP+273,'P',PP,'CO','water','CO2','hydrogen','methane',[CO_P,H2O_P,CO2_P,H2_P,CH4_P])+HosP;
+    C8=FR*HR-Q-FP*HP; % Energy balance
+    C9=PR-PP;
+    C=EC(TP,PP,CO_P,H2O_P,CO2_P,H2_P,CH4_P);% Equilibrium Constraints
+    C10=C(1);
+    C11=C(2);
+    Ceq=[C1;C2;C3;C4;C5;C6;C7;C8;C9;C10;C11];
+    C=[];
+end
+function Hos=OffSetR(CO_R,H2O_R,H2_R)
+    Hos=CO_R*-122813.37690204574+H2O_R*-285995.1604551062+H2_R*-7963.037870345514;
+end
+function Hos=OffSetP(CO_P,H2O_P,CO2_P,H2_P,CH4_P)
+    Hos=CO_P*-122813.37690204574+H2O_P*-285995.1604551062+CO2_P*-415568.8760894639+H2_P*-7963.037870345514+CH4_P*-89098.91450281504;
+end
+function C=EC(TP,PP,CO_P,H2O_P,CO2_P,H2_P,CH4_P)
+    R=8.314;
+    CO_Hos=-122813.37690204574;
+    H2O_Hos=-285995.1604551062;
+    CO2_Hos=-415568.8760894639;
+    H2_Hos=-7963.037870345514;
+    CH4_Hos=-89098.91450281504;
+    
+    CO_Sos=-21.53856518258297;
+    H2O_Sos=-165.63852216324867;
+    CO2_Sos=-116.76001784087575;
+    H2_Sos=-109.68429686419977;
+    CH4_Sos=-187.77311250193037;
+    
+    CO_H=refpropm('H<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[1,0,0,0,0])+CO_Hos;
+    H2O_H=refpropm('H<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,1,0,0,0])+H2O_Hos;
+    CO2_H=refpropm('H<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,0,1,0,0])+CO2_Hos;
+    H2_H=refpropm('H<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,0,0,1,0])+H2_Hos;
+    CH4_H=refpropm('H<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,0,0,0,1])+CH4_Hos;
+    
+    CO_S=refpropm('S<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[1,0,0,0,0])+CO_Sos;
+    H2O_S=refpropm('S<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,1,0,0,0])+H2O_Sos;
+    CO2_S=refpropm('S<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,0,1,0,0])+CO2_Sos;
+    H2_S=refpropm('S<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,0,0,1,0])+H2_Sos;
+    CH4_S=refpropm('S<','T',TP+273,'P',100,'CO','water','CO2','hydrogen','methane',[0,0,0,0,1])+CH4_Sos;
+    
+    CO_G=CO_H-(TP+273)*CO_S;
+    H2O_G=H2O_H-(TP+273)*H2O_S;
+    CO2_G=CO2_H-(TP+273)*CO2_S;
+    H2_G=H2_H-(TP+273)*H2_S;
+    CH4_G=CH4_H-(TP+273)*CH4_S;
+
+    dG1=CO2_G+H2_G-(CO_G+H2O_G);
+    dG2=CH4_G+H2O_G-(CO_G+3*H2_G);
+    
+    T=TP+273;
+    K1=exp(-dG1/(R*T));
+    K2=exp(-dG2/(R*T));
+    F=(refpropm('F<','T',TP+273,'P',PP,'CO','water','CO2','hydrogen','methane',[CO_P,H2O_P,CO2_P,H2_P,CH4_P])/100.0);
+    CO_F=F(1);
+    H2O_F=F(2);
+    CO2_F=F(3);
+    H2_F=F(4);
+    CH4_F=F(5);
+    
+    RHS1=CO2_F*H2_F/(CO_F*H2O_F);
+    C1=1-RHS1/K1;
+    RHS2=CH4_F*H2O_F/(CO_F*H2_F^3);
+    C2=1-RHS2/K2;
+    C=[C1;C2];
+end
+'''
