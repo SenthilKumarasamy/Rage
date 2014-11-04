@@ -111,10 +111,8 @@ class Material_Stream:
             dx=i.Est*self.perturb
             i.Est=x+dx
             f1=self.Therm.PsatStream(self.output)
-            print 'f1',f1
             i.Est=x-dx
             f_1=self.Therm.PsatStream(self.output)
-            print 'f_1',f_1
             i.Est=x
             dhdt=(f1-f_1)/(2*dx)
             GDic[i]=dhdt
