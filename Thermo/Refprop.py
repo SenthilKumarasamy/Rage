@@ -153,31 +153,31 @@ class Refprop():
                 fu[i]=Fgctystrm[ind]
         return fu
     
-    def FugacityCoefficient(self,Temp,Press,State,Composition):
-        fu={}
-        Rp.PUREFLD(0)
-        key = Composition.keys()
-        for i in self.Comp:
-            if i in key:
-                self.Xfrac[i.CompIndex]=Composition[i]
-            else:
-                self.Xfrac[i.CompIndex]=0
-        Rho,err=Rp.TPRHO(Temp+273, Press, self.Xfrac, State)           
-        Fgctystrm,err=Rp.FUGCOF(Temp+273,self.Xfrac,Rho)
-        if (err!=0):
-            print 'Error: Occured while computing Fucacity Coefficient'
-            exit()
-        else:
-            for ind,i in enumerate(self.Comp):
-                if i in key:
-                    fu[i]=Fgctystrm[ind]
-        return fu
-    
-    def MolWtComp(self,Comp):
-        Rp.PUREFLD(Comp.CompIndex+1)
-        Mw=Rp.WMOL([1])
-        Rp.PUREFLD(0)
-        return Mw
+#     def FugacityCoefficient(self,Temp,Press,State,Composition):
+#         fu={}
+#         Rp.PUREFLD(0)
+#         key = Composition.keys()
+#         for i in self.Comp:
+#             if i in key:
+#                 self.Xfrac[i.CompIndex]=Composition[i]
+#             else:
+#                 self.Xfrac[i.CompIndex]=0
+#         Rho,err=Rp.TPRHO(Temp+273, Press, self.Xfrac, State)           
+#         Fgctystrm,err=Rp.FUGCOF(Temp+273,self.Xfrac,Rho)
+#         if (err!=0):
+#             print 'Error: Occured while computing Fucacity Coefficient'
+#             exit()
+#         else:
+#             for ind,i in enumerate(self.Comp):
+#                 if i in key:
+#                     fu[i]=Fgctystrm[ind]
+#         return fu
+#     
+#     def MolWtComp(self,Comp):
+#         Rp.PUREFLD(Comp.CompIndex+1)
+#         Mw=Rp.WMOL([1])
+#         Rp.PUREFLD(0)
+#         return Mw
     
     def RhoStreamAtNTP(self,Stream):
         key = Stream.CTag.keys()

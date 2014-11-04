@@ -150,14 +150,14 @@ class EquilibriumReactor(Reactor):
         Resid=(1 - Prod/K)
         return Resid
     
-    def EquilibriumConstraint1(self,Rxn):
-        Prod=1.0
-        mu=sum(Rxn.Coef.values())
-        for i in Rxn.Coef.keys():
-            Prod=Prod*(self.Pstrm.CTag[i].Est)**(Rxn.Coef[i])
-        K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)*(self.Pstrm.PTag.Est/100.0)**(-mu)
-        Resid=(1 - Prod/K)
-        return Resid
+#     def EquilibriumConstraint1(self,Rxn):
+#         Prod=1.0
+#         mu=sum(Rxn.Coef.values())
+#         for i in Rxn.Coef.keys():
+#             Prod=Prod*(self.Pstrm.CTag[i].Est)**(Rxn.Coef[i])
+#         K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)*(self.Pstrm.PTag.Est/100.0)**(-mu)
+#         Resid=(1 - Prod/K)
+#         return Resid
     
     def EquilibriumGradient(self):
         XID=[self.Pstrm.TTag,self.Pstrm.PTag]
