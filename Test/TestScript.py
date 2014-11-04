@@ -19,6 +19,9 @@ from EX18 import Test18
 from EX19 import Test19
 from EX20 import Test20
 from EX21 import Test21
+from EX22 import Test22
+from EX23 import Test23
+from EX24 import Test24
 Ctol=1e-5
 Ptol=1.0
 List=[]
@@ -43,6 +46,9 @@ List.append(Test18(Ctol,Ptol))
 List.append(Test19(Ctol,Ptol))
 List.append(Test20(Ctol,Ptol))
 List.append(Test21(Ctol,Ptol))
+List.append(Test22(Ctol,Ptol))
+List.append(Test23(Ctol,Ptol))
+List.append(Test24(Ctol,Ptol))
 
 for ind,i in enumerate(List):
     print '=============================================================================================================================================================================='
@@ -63,7 +69,7 @@ for ind,i in enumerate(List):
     elif (i.Type==7):
         print 'Problem Type: Material, Component, Energy, and Pressure Balance with Normalization'
     if (i.TestResult):
-        print 'Result   : Python solution matches the hard coded Matlab results'
+        print 'Result   : Python solution matches with the hard coded Matlab results or the solution.'
     else:
         print 'Result   : Python solution does not match the hard coded Matlab results'
         if (i.TestResultPercentage):

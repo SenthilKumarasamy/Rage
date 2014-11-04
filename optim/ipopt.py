@@ -999,7 +999,7 @@ class ipopt:
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
                 quit()
-        print BList   
+        #print BList   
         self.Pass=all(BList)
         return self.Pass
         

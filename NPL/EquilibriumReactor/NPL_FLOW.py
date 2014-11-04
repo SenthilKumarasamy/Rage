@@ -38,7 +38,8 @@ if __name__=="__main__":
     #str1="C:\\Users\\admin\\workspace\\RAGE//NPLMeas09_06_14.dat"
     #str1="D:\\Gyandata\\Python\\RAGE\\NPLMeas09_06_14.dat"
     #str1="C:\\Users\\Senthil\\git\\Rage\\NPLMeas09_06_14.dat"
-    str1=filepath+"\\"+"NPLMeas09_06_14.dat"
+    #str1=filepath+"\\"+"NPLMeas09_06_14.dat"
+    str1="NPLMeas09_06_14.xls"
     R1=Readfile(str1)
     '-----------------------Creating Objects--------------------------------------------'   
     
@@ -806,6 +807,8 @@ if __name__=="__main__":
     ListStreams.append(StrmLT2)
     
     '''Defining water from de-aerator to Exchanger E3'''
+    for i in R1.Name:
+        print i
     FU_W9=Sensor('FU_W9',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W9=Sensor('TU_W9',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PU_W9=Sensor('PU_W9',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)

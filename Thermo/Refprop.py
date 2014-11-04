@@ -224,7 +224,7 @@ class Refprop():
                 self.Xfrac[i.CompIndex]=Stream.CTag[i].Est
             else:
                 self.Xfrac[i.CompIndex]=0.0
-        Rho,err=Rp.TPRHO(Stream.TTag.Est+273, Stream.PTag.Est, self.Xfrac, Stream.State)
+        Rho,err=Rp.TPRHO(Stream.TTag.Est+273.0, Stream.PTag.Est, self.Xfrac, Stream.State)
         if (err!=0):
             print 'Error code ',err
             print 'Error while calculating density of the stream ',Stream.Name
