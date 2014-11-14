@@ -3,7 +3,7 @@ from numpy import asarray
 from math import log
 from Units.Reactor import Reactor
 class EquilibriumReactor(Reactor):
-    def __init__(self,Name,Rstrm,Pstrm,Qstrm,Rxn,ExoEndoFlag=1,dp=0):
+    def __init__(self,Name,Rstrm,Pstrm,Qstrm,Rxn,EquEff=[],ExoEndoFlag=1,dp=0):
 #===================Validation Starts======================================
         self.Name=Name        
         if ((ExoEndoFlag != -1) and (ExoEndoFlag != 1)):
@@ -51,6 +51,41 @@ class EquilibriumReactor(Reactor):
             if (i not in Pstrm.CTag.keys()):
                 print 'One of the products of a reaction is not present in the product stream of a reactor'
                 exit()
+#===================Equilibrium Effectiveness factor========================================   
+#         self.EquEff={}
+#         if (len(Rxn)==len(EquEff)):
+#             for ind,i in enumerate(EquEff):
+#                 if (i>1.0):
+#                     print 'Waring in unit ', self.Name,' :','One of the Equilibrium Effectiveness factor is greater than one'
+#                     print 'Setting the concerned Effectiveness factor equal to one'
+#                     self.EquEff[Rxn[ind]]=1.0
+#                 else:
+#                     self.EquEff[Rxn[ind]]=i
+#         else:
+#             if (EquEff!=[]):
+#                 print 'Warning in Unit ',self.Name, ' :','No. of Equilibrium effectiveness factors not equal to no. of reactions'
+#                 print 'Ignoring the Equilibrium Effectiveness factor'
+#             else:
+#                 print 'Warning in Unit ',self.Name, ' :','Equilibrium effectiveness factors are not specified.'
+#                 print 'Ignoring the Equilibrium Effectiveness factor'
+#             for i in Rxn:
+#                 self.EquEff[i]=1.0
+#===========================End of Equilibrium Effectiveness factor=========================================================
+#==========================Approach to Equilibrium=====================================
+        self.EquEff={}
+        if (len(Rxn)==len(EquEff)):
+             for ind,i in enumerate(EquEff):
+                self.EquEff[Rxn[ind]]=i
+        else:
+             if (EquEff!=[]):
+                 print 'Warning in Unit ',self.Name, ' :','No. of Equilibrium effectiveness factors not equal to no. of reactions'
+                 print 'Ignoring the Equilibrium Effectiveness factor'
+             else:
+                 print 'Warning in Unit ',self.Name, ' :','Equilibrium effectiveness factors are not specified.'
+                 print 'Ignoring the Equilibrium Effectiveness factor'
+             for i in Rxn:
+                 self.EquEff[i]=0.0
+#========================End of Approach to Equilibrium=====================
 #====================================Validation ends=================================        
         self.Rstrm=Rstrm
         self.Pstrm=Pstrm
@@ -144,8 +179,8 @@ class EquilibriumReactor(Reactor):
         for j in Rxn.Coef.keys():
             if (fu[j]!=0.0):
                 Prod = Prod * (fu[j]/100.00)**(Rxn.Coef[j])
-        #K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.PTag.Est,self.Pstrm.State)
-        K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)
+        K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State,self.EquEff[Rxn])
+        #K=self.EquEff[Rxn]*self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)
         #Resid=(K - Prod)
         Resid=(1 - Prod/K)
         return Resid

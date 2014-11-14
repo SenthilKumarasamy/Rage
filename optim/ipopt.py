@@ -1043,10 +1043,17 @@ class ipopt:
 
     
     def MakeTPconstant(self):
+        Pstrm=[]
+        for i in self.ListUints:
+            if (isinstance(i,Reactor)):
+                Pstrm.append(i.Pstrm)
         for i in self.ListStreams:
             if (not isinstance(i,Energy_Stream)):
-                i.TTag.Flag=2
-                i.PTag.Flag=2
+                if (i not in Pstrm):
+                    i.TTag.Flag=2
+                    i.PTag.Flag=2
+                else:
+                    i.PTag.Flag=2
             else:
                 i.Q.Flag=2
     

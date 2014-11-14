@@ -15,13 +15,18 @@ def ToExternalUnits(ListStreams):
                 i.FTag.Meas=i.FTag.Meas/Rho
                 i.FTag.Sigma=i.FTag.Sigma/Rho
             elif (i.FTag.Unit.upper()=='KG/HR'):
-                AvgMW=0.0
+                AvgMWEst=0.0
+                AvgMWMeas=0.0
                 key=i.CTag.keys()
                 for j in key:
-                    AvgMW=AvgMW+j.MolWt*i.CTag[j].Est
-                i.FTag.Est=i.FTag.Est*AvgMW
-                i.FTag.Meas=i.FTag.Meas*AvgMW
-                i.FTag.Sigma=i.FTag.Sigma*AvgMW
+                    AvgMWEst=AvgMWEst+j.MolWt*i.CTag[j].Est
+                    AvgMWMeas=AvgMWMeas+j.MolWt*i.CTag[j].Meas
+                if (i.FTag.Flag==2):
+                    i.FTag.Est=i.FTag.Est*AvgMWMeas
+                else:
+                    i.FTag.Est=i.FTag.Est*AvgMWEst
+                i.FTag.Meas=i.FTag.Meas*AvgMWMeas
+                i.FTag.Sigma=i.FTag.Sigma*AvgMWMeas
             CUnit=[]
             sumMW=0.0
             sumMW1=0.0

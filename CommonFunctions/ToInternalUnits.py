@@ -54,6 +54,6 @@ def ToInternalUnits(ListStreams):
                     for j in i.CTag.keys():
                         # Dry to wet basis
                         if (i.FreeBasis[0]!=j):
-                            i.CTag[j].Est=i.CTag[j].Est*(1.0-i.CTag[i.FreeBasis[0]].Est)
+                            i.CTag[j].Est=i.CTag[j].Est*(1.0+i.CTag[i.FreeBasis[0]].Est)
                 
 

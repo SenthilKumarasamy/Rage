@@ -28,7 +28,7 @@ class Refprop():
         CompNameList=[]
         self.Xfrac=[0]*len(self.Comp)
         #f=open("D:\\Gyandata\\PythonRage\\RAGE2\\Rage\\Thermo\\" + DBfile,'r')
-        #f=open("C:\\Users\\admin\\workspace\\RAGE\\Thermo\\" + DBfile,'r')
+        #f=open("C:\\Users\\admin\\workspace\\R1\\Thermo\\" + DBfile,'r')
         f=open("C:\\Users\\Senthil\\git\\Rage\\Thermo\\"+ DBfile,'r')
         Lines=f.readlines()
         for i in Lines:
@@ -87,12 +87,12 @@ class Refprop():
             DG = DG + self.GibbsComp(i,T,100.0,State)*Rxn.Coef[i]
         return DG
     
-    def EquilibriumConstant(self,Rxn,T,State):
+    def EquilibriumConstant(self,Rxn,T,State,AppTemp=0.0):
     #def EquilibriumConstant(self,Rxn,T,P,State):
         R=8.314 # GigaJoules/(Kgmole K)
-        Temp = T +273
+        Temp = T + AppTemp + 273
         #K = exp(-self.DGRxn(Rxn,T,P,State)/(R*Temp))
-        K = exp(-self.DGRxn(Rxn,T,State)/(R*Temp))
+        K = exp(-self.DGRxn(Rxn,T+AppTemp,State)/(R*Temp))
         return K
         
 #     def EnthalpyStream(self,Stream):
@@ -186,7 +186,7 @@ class Refprop():
                 self.Xfrac[i.CompIndex]=Stream.CTag[i].Est
             else:
                 self.Xfrac[i.CompIndex]=0
-        Rho,err=Rp.TPRHO(25+273, 101.325, self.Xfrac, Stream.State)
+        Rho,err=Rp.TPRHO(273, 101.325, self.Xfrac, Stream.State)
         return Rho
     
     def RhoStreamAtSTP(self,Stream):
@@ -196,7 +196,7 @@ class Refprop():
                 self.Xfrac[i.CompIndex]=Stream.CTag[i].Est
             else:
                 self.Xfrac[i.CompIndex]=0
-        Rho,err=Rp.TPRHO(15.6+273, 101.325, self.Xfrac, Stream.State)
+        Rho,err=Rp.TPRHO(15.5+273, 101.325, self.Xfrac, Stream.State)
         return Rho
     
     def PsatStream(self,Stream):
