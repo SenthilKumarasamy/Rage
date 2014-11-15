@@ -389,13 +389,16 @@ if __name__=="__main__":
     E5=Energy_Stream('E5',0)
     E5.Q.Flag=2
     ListStreams.append(E5)
+    
+    '''defining shift reaction'''
+    RE8a=Reaction('RE8a',[CO,H2O,CO2,H2],[-1,-1,1,1])
       
                                 
     '''Defining REX3 (Adiabatic Reactor) (High Temperature Shift Reactor)'''
     #REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
     #REX3=Reactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
     #REX3=EquilibriumReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8],[0.0],ExoEndoFlag=-1)
-    REX3=ShiftReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8],[0.1],ExoEndoFlag=-1)
+    REX3=ShiftReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8a],[0.1],ExoEndoFlag=-1)
     REX3.Describe='HT Shift Reactor'
     ListUnits.append(REX3)
                               
@@ -419,11 +422,15 @@ if __name__=="__main__":
     E6=Energy_Stream('E6',0)
     E6.Q.Flag=2
     ListStreams.append(E6)
+    
+    '''defining shift reaction'''
+    RE8b=Reaction('RE8b',[CO,H2O,CO2,H2],[-1,-1,1,1])
+    
                                   
     '''Defining REX4 (Low Temp Shift Reactor) '''
     #REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
     #REX4=EquilibriumReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8],[0.0],ExoEndoFlag=-1)
-    REX4=ShiftReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8],[19.3],ExoEndoFlag=-1)
+    REX4=ShiftReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8b],[19.3],ExoEndoFlag=-1)
     #REX4=Reactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
     REX4.Describe='LT Shift Reactor'
     ListUnits.append(REX4)

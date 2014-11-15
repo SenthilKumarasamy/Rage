@@ -2,7 +2,7 @@ from numpy import zeros
 from numpy import shape
 from numpy import asarray
 from numpy.linalg import qr
-from numpy.linalg import pinv
+from numpy.linalg import inv
 from numpy.linalg import matrix_rank
 from numpy.linalg import svd
 from numpy import dot
@@ -185,7 +185,7 @@ class GLR():
     def ComputeRVinv(self,Abar,bbar,Xmeas,Sigma):
         r=dot(Abar,mat([Xmeas]).T)-bbar
         V=dot(dot(Abar,Sigma),Abar.T)
-        Vinv=pinv(V)
+        Vinv=inv(V)
         return r,Vinv
     
     def MakeList(self,Abar):
@@ -228,7 +228,7 @@ class GLR():
         for ind,i in enumerate(ToBeTested):
             Fki[:,s[1]]=Abar[:,i]
             FTemp=dot(dot(Fki.T,Vinv),r)
-            FTemp1=pinv(dot(dot(Fki.T,Vinv),Fki))
+            FTemp1=inv(dot(dot(Fki.T,Vinv),Fki))
             GLRStatistic[ind]=dot(dot(FTemp.T,FTemp1),FTemp)
             ErrPos=GLRStatistic.index(max(GLRStatistic))
         return ErrPos,GLRStatistic[ErrPos]

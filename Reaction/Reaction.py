@@ -4,10 +4,18 @@ Created on Jun 19, 2014
 @author: Senthil
 '''
 class Reaction:
-    def __init__(self,Name,Comp,Coef,EqFlag=0):
+    def __init__(self,Name,Comp,Coef,EquTempAppFlag=0,EquTempApp=0.0):
         C=[]
         self.Name = Name
-        self.EqFlag=EqFlag
+        self.RxnExt=0.0
+        self.RxnExtXindex=0
+        self.EquTempAppFlag=EquTempAppFlag
+        if (EquTempAppFlag==1):
+            self.EquTempApp=EquTempApp
+            self.EquTempAppXindex=0
+        elif (EquTempAppFlag==2):
+            self.EquTempApp=EquTempApp
+        
         if (0 in Coef):
             print 'One of the corfficients of a reaction is zero'
             exit()
