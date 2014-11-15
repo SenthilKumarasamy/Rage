@@ -257,7 +257,7 @@ if __name__=="__main__":
     H2_NS3=Sensor('H2_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     H2O_NS3=Sensor('H2O_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO_NS3=Sensor('CO_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CTag={N2:N2_NS3,CH4:CH4_NS3,H2:H2_NS3,H2O:H2O_NS3,CO:CO_NS3}#C2H6:C2H6_NS3,C3H8:C3H8_NS3,C4H10:C4H10_NS3,CO2:CO2_NS3,C5H12:C5H12_NS3,C6H14:C6H14_NS3
+    CTag={N2:N2_NS3,CH4:CH4_NS3,H2:H2_NS3,H2O:H2O_NS3,CO:CO_NS3,CO2:CO2_NS3}#C2H6:C2H6_NS3,C3H8:C3H8_NS3,C4H10:C4H10_NS3,CO2:CO2_NS3,C5H12:C5H12_NS3,C6H14:C6H14_NS3
     StrmNS3=Material_Stream('StrmNS3',FU_NS3,TI3119,PI4132,2,T1,CTag)
     StrmNS3.Describe='Pre-Reformer outlet1'
     ListStreams.append(StrmNS3)
@@ -307,7 +307,7 @@ if __name__=="__main__":
        
     '''Definig REX1 (PreReformer2)'''
     #REX1a=EquilibriumReactor('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[0],ExoEndoFlag=1)
-    REX1a=PreReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[0,0],ExoEndoFlag=1)
+    REX1a=PreReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[10.1,0],ExoEndoFlag=1)
     #REX1a=SteamReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[-10.1],ExoEndoFlag=1)
     REX1a.Describe='Pre-Reformer'
     ListUnits.append(REX1a)
@@ -370,7 +370,7 @@ if __name__=="__main__":
     '''Defining REX2 (Steam Reformer) '''
     #REX2=ElementBalanceReactor('REX2',StrmNS5,StrmNS6,[E4],ExoEndoFlag=1)
     #REX2=EquilibriumReactor('REX2',StrmNS4,StrmNS6,[E4],[RE7a,RE8],[0,0],ExoEndoFlag=1)
-    REX2=SteamReformer('REX2',StrmNS4,StrmNS6,[E4],[RE7a,RE8],[0,0],ExoEndoFlag=1)
+    REX2=SteamReformer('REX2',StrmNS4,StrmNS6,[E4],[RE7a,RE8],[3.6,0],ExoEndoFlag=1)
     #REX2=Reactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
     REX2.Describe='Steam Reformer (Located inside the furnace)'
     ListUnits.append(REX2)
@@ -395,7 +395,7 @@ if __name__=="__main__":
     #REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
     #REX3=Reactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
     #REX3=EquilibriumReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8],[0.0],ExoEndoFlag=-1)
-    REX3=ShiftReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8],[0.0],ExoEndoFlag=-1)
+    REX3=ShiftReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8],[0.1],ExoEndoFlag=-1)
     REX3.Describe='HT Shift Reactor'
     ListUnits.append(REX3)
                               
@@ -423,7 +423,7 @@ if __name__=="__main__":
     '''Defining REX4 (Low Temp Shift Reactor) '''
     #REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
     #REX4=EquilibriumReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8],[0.0],ExoEndoFlag=-1)
-    REX4=ShiftReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8],[0.0],ExoEndoFlag=-1)
+    REX4=ShiftReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8],[19.3],ExoEndoFlag=-1)
     #REX4=Reactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
     REX4.Describe='LT Shift Reactor'
     ListUnits.append(REX4)

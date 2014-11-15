@@ -1054,6 +1054,7 @@ class ipopt:
                     i.PTag.Flag=2
                 else:
                     i.PTag.Flag=2
+                    i.TTag.Flag=2
             else:
                 i.Q.Flag=2
     
