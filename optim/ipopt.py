@@ -178,19 +178,19 @@ class ipopt:
             elif (isinstance(i,AdiabaticElementBalanceReactor)):
                 s=0
             elif (isinstance(i,EquilibriumReactor2)):
-                for j in (i.RxnExt.keys()):
+                for j in i.Rxn: #modified
                     self.XFlag.append(0)
-                    i.RxnExtXindex[j]=len(self.XFlag)-1
-                    self.X.append(i.RxnExt[j])
+                    j.RxnExtXindex=len(self.XFlag)-1 # modified
+                    self.X.append(j.RxnExt) # modified
                     self.Sigma.append(1)
                     self.FBFlag.append(0)
                 s=0
                 
             elif (isinstance(i,Reactor)     or isinstance(i,EquilibriumReactor)):
-                  for j in (i.RxnExt.keys()):
+                  for j in i.Rxn: # modified
                     self.XFlag.append(0)
-                    i.RxnExtXindex[j]=len(self.XFlag)-1
-                    self.X.append(i.RxnExt[j])
+                    j.RxnExtXindex=len(self.XFlag)-1 # modified
+                    self.X.append(j.RxnExt) # modified
                     self.Sigma.append(1)
                     self.FBFlag.append(0)
 
@@ -907,12 +907,12 @@ class ipopt:
             elif (isinstance(i,AdiabaticElementBalanceReactor)):
                 s=0
             elif (isinstance(i,EquilibriumReactor2)):
-                for k in i.RxnExt.keys():
-                    i.RxnExt[k]=X[i.RxnExtXindex[k]]
+                for k in i.Rxn: # modified
+                    k.RxnExt=X[k.RxnExtXindex] # modified
                 s=0
             elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
-                for k in i.RxnExt.keys():
-                    i.RxnExt[k]=X[i.RxnExtXindex[k]]
+                for k in i.Rxn: #modified
+                    k.RxnExt=X[k.RxnExtXindex] # modified
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print 'here'
                 print "Object in the list is not defined"

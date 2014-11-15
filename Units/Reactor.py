@@ -56,11 +56,11 @@ class Reactor:
         self.Qstrm=Qstrm
         self.Dp=dp
         self.Rxn=Rxn
-        self.RxnExt={}
-        self.RxnExtXindex={}
-        for i in Rxn:
-            self.RxnExt[i]=0
-            self.RxnExtXindex[i]=0
+#         self.RxnExt={}
+#         self.RxnExtXindex={}
+#         for i in Rxn:
+#             self.RxnExt[i]=0
+#             self.RxnExtXindex[i]=0
             
         self.ListComp=[]
         for i in self.Pstrm.CTag.keys():
@@ -75,7 +75,8 @@ class Reactor:
         self.LenCompRes=len(self.ListComp)
         self.LenEneRes=1
         self.LenPreRes=1
-        self.RxnExt=self.InitialGuessRxnExt()
+        #self.RxnExt=self.InitialGuessRxnExt()
+        self.InitialGuessRxnExt()
 #         self.MB_SF=abs(asarray(self.MaterialBalRes()))
 #         self.CB_SF=abs(asarray(self.ComponentBalRes()))
 #         self.EB_SF=abs(asarray(self.EnergyBalRes()))
@@ -102,7 +103,8 @@ class Reactor:
         NComp=len(self.ListComp)
         SMat=zeros((NComp,NRxn))
         for ind1,i in enumerate(self.ListComp):
-            for ind2,j in enumerate(self.RxnExt.keys()):
+            #for ind2,j in enumerate(self.RxnExt.keys()): # Change RxnExt.keys() to Rxn
+            for ind2,j in enumerate(self.Rxn):
                 if (i in j.Coef.keys()):
                     SMat[ind1,ind2]=j.Coef[i]
         return SMat
@@ -130,11 +132,9 @@ class Reactor:
         B=pinv(dot(A.T,A))
         C=dot(B,A.T)
         Ext=dot(C,b)
-        for ind,i in enumerate(self.RxnExt.keys()):
-            RxnExt[i]=Ext[ind,0]
-        return RxnExt
-                
-                
+        #for ind,i in enumerate(self.RxnExt.keys()): # to be modified
+        for ind,i in enumerate(self.Rxn):
+            i.RxnExt=Ext[ind,0]        
     
     def MaterialBalRes(self):
         Resid=[]
@@ -144,9 +144,9 @@ class Reactor:
         Resid=[]
         for i in self.ListComp:
             sumC=0.0
-            for j in self.RxnExt.keys():
+            for j in self.Rxn:  #  modified
                 if (i in j.Coef.keys()):
-                    sumC=sumC+j.Coef[i]*self.RxnExt[j]
+                    sumC=sumC+j.Coef[i]*j.RxnExt #  modified
             if (i in self.Rstrm.CTag.keys()):
                 inletcomp=self.Rstrm.FTag.Est*self.Rstrm.CTag[i].Est
             else:
@@ -177,9 +177,9 @@ class Reactor:
     def ComponentBalJaco(self,len1):
         J = zeros((self.LenCompRes,len1))
         for ind,i in enumerate(self.ListComp):
-            for j in self.RxnExt.keys():
+            for j in self.Rxn: #modified
                 if (i in j.Coef.keys()):
-                    J[ind,self.RxnExtXindex[j]] = j.Coef[i]
+                    J[ind,j.RxnExtXindex] = j.Coef[i]
             
             if (i in self.Rstrm.CTag.keys()):
                 if (self.Rstrm.CTag[i].Flag != 2):
@@ -246,10 +246,10 @@ class Reactor:
         row=[]
         col=[]
         for ind,i in enumerate(self.ListComp):
-            for j in self.RxnExt.keys():
+            for j in self.Rxn: #modified
                 if (i in j.Coef.keys()):
                     row.append(ind)
-                    col.append(self.RxnExtXindex[j])           
+                    col.append(j.RxnExtXindex)# modified           
             if (i in self.Rstrm.CTag.keys()):
                 if (self.Rstrm.CTag[i].Flag != 2):
                     row.append(ind)

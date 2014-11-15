@@ -94,11 +94,11 @@ class EquilibriumReactor(Reactor):
         self.perturb=1e-2
         self.EFlag=ExoEndoFlag
         self.Rxn=Rxn
-        self.RxnExt={}
-        self.RxnExtXindex={}
-        for i in Rxn:
-            self.RxnExt[i]=0
-            self.RxnExtXindex[i]=0
+#         self.RxnExt={}
+#         self.RxnExtXindex={}
+#         for i in Rxn:
+#             self.RxnExt[i]=0
+#             self.RxnExtXindex[i]=0
             
         self.ListComp=[]
         for i in self.Pstrm.CTag.keys():
@@ -109,11 +109,11 @@ class EquilibriumReactor(Reactor):
                 self.ListComp.append(i)
         self.SMat=self.StoichioMatrix()
         self.LenMatRes=0
-        self.LenCompRes=len(self.ListComp) + len(self.RxnExt.keys())
+        self.LenCompRes=len(self.ListComp) + len(self.Rxn) #modified
         #self.LenCompRes= len(self.RxnExt.keys())
         self.LenEneRes=1
         self.LenPreRes=1
-        self.InitialExt=self.InitialGuessRxnExt()
+        self.InitialGuessRxnExt() #modified
 #         self.MB_SF=abs(asarray(self.MaterialBalRes()))
 #         self.CB_SF=abs(asarray(self.ComponentBalRes()))
 #         self.EB_SF=abs(asarray(self.EnergyBalRes()))
@@ -140,9 +140,9 @@ class EquilibriumReactor(Reactor):
         Resid=[]
         for i in self.ListComp:
             sumC=0.0
-            for j in self.RxnExt.keys():
+            for j in self.Rxn: #modified
                 if (i in j.Coef.keys()):
-                    sumC=sumC+j.Coef[i]*self.RxnExt[j]
+                    sumC=sumC+j.Coef[i]*j.RxnExt # modified
             if (i in self.Rstrm.CTag.keys()):
                 inletcomp=self.Rstrm.FTag.Est*self.Rstrm.CTag[i].Est
             else:
@@ -259,9 +259,9 @@ class EquilibriumReactor(Reactor):
     def ComponentBalJaco(self,len1):
         J = zeros((self.LenCompRes,len1))
         for ind,i in enumerate(self.ListComp):
-            for j in self.RxnExt.keys():
+            for j in self.Rxn: #modified
                 if (i in j.Coef.keys()):
-                    J[ind,self.RxnExtXindex[j]] = j.Coef[i]            
+                    J[ind,j.RxnExtXindex] = j.Coef[i]  #modified          
             if (i in self.Rstrm.CTag.keys()):
                 if (self.Rstrm.CTag[i].Flag != 2):
                     J[ind,self.Rstrm.CTag[i].Xindex] = self.Rstrm.FTag.Est
@@ -291,10 +291,10 @@ class EquilibriumReactor(Reactor):
         row=[]
         col=[]
         for ind,i in enumerate(self.ListComp):
-            for j in self.RxnExt.keys():
+            for j in self.Rxn: #modified
                 if (i in j.Coef.keys()):
                     row.append(ind)
-                    col.append(self.RxnExtXindex[j])           
+                    col.append(j.RxnExtXindex) #modified           
             if (i in self.Rstrm.CTag.keys()):
                 if (self.Rstrm.CTag[i].Flag != 2):
                     row.append(ind)
