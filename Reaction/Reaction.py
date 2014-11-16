@@ -4,7 +4,7 @@ Created on Jun 19, 2014
 @author: Senthil
 '''
 class Reaction:
-    def __init__(self,Name,Comp,Coef,EquTempAppFlag=0,EquTempApp=0.0):
+    def __init__(self,Name,Comp,Coef,EquTempAppFlag=2,EquTempApp=0.0):
         C=[]
         self.Name = Name
         self.RxnExt=0.0

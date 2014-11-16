@@ -22,6 +22,7 @@ from Units.Seperator import Seperator
 from Units.Reactor import Reactor
 from Units.Mixer import Mixer
 from Units.Pump import Pump
+from numpy.core.numeric import Inf
 
 class ipopt:
 #     ListStreams=[]
@@ -177,16 +178,22 @@ class ipopt:
                 s=0
             elif (isinstance(i,AdiabaticElementBalanceReactor)):
                 s=0
-            elif (isinstance(i,EquilibriumReactor2)):
+            elif (isinstance(i,EquilibriumReactor)):
                 for j in i.Rxn: #modified
                     self.XFlag.append(0)
                     j.RxnExtXindex=len(self.XFlag)-1 # modified
                     self.X.append(j.RxnExt) # modified
                     self.Sigma.append(1)
                     self.FBFlag.append(0)
+                    if (j.EquTempAppFlag != 2):
+                        self.XFlag.append(0)
+                        j.EquTempAppXindex=len(self.XFlag)-1
+                        self.X.append(j.EquTempApp)
+                        self.Sigma.append(1)
+                        self.FBFlag.append(0)
                 s=0
                 
-            elif (isinstance(i,Reactor)     or isinstance(i,EquilibriumReactor)):
+            elif (isinstance(i,Reactor)):#     or isinstance(i,EquilibriumReactor)):
                   for j in i.Rxn: # modified
                     self.XFlag.append(0)
                     j.RxnExtXindex=len(self.XFlag)-1 # modified
@@ -209,6 +216,12 @@ class ipopt:
                     if (i.CTag[val].Flag!=2):
                         self.XUB[i.CTag[val].Xindex]=1.00001
                         self.XLB[i.CTag[val].Xindex]=1e-12
+        for i in self.ListUints:
+            if (isinstance(i,EquilibriumReactor)):
+                for j in i.Rxn:
+                    if (j.EquTempAppFlag != 2):
+                        self.XUB[j.EquTempAppXindex]=30
+                        self.XLB[j.EquTempAppXindex]=-30
     #---------------------------------------------------------------------
 
     def JacobianSize(self):
@@ -906,11 +919,13 @@ class ipopt:
                 s=0
             elif (isinstance(i,AdiabaticElementBalanceReactor)):
                 s=0
-            elif (isinstance(i,EquilibriumReactor2)):
+            elif (isinstance(i,EquilibriumReactor)):
                 for k in i.Rxn: # modified
                     k.RxnExt=X[k.RxnExtXindex] # modified
+                    if (k.EquTempAppFlag !=2):
+                        k.EquTempApp=X[k.EquTempAppXindex]
                 s=0
-            elif (isinstance(i,Reactor) or isinstance(i,EquilibriumReactor)):
+            elif (isinstance(i,Reactor)):# or isinstance(i,EquilibriumReactor)):
                 for k in i.Rxn: #modified
                     k.RxnExt=X[k.RxnExtXindex] # modified
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):

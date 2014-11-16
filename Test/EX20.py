@@ -21,7 +21,7 @@ from EX15 import Test15
 class Test20(Test15):
     def __init__(self,Ctol=1e-5,Ptol=1):
         self.Description='Reactor (Equilibrium Reactor)'   
-        self.Type=7
+        self.Type=5
         H2=Comp(4,StdState=2)
         CO2=Comp(2,StdState=2)
         CO=Comp(1,StdState=2)
@@ -29,7 +29,7 @@ class Test20(Test15):
         
         Therm=Refprop([CO,H2O,CO2,H2])
         
-        Rxn1=Reaction('Rxn1',[CO,H2O,CO2,H2],[-1,-1,1,1])
+        Rxn1=Reaction('Rxn1',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=1,EquTempApp=0.0)
         
         ListStreams=[]
         ListUnits=[]
@@ -77,7 +77,7 @@ class Test20(Test15):
         ListUnits.append(REX)
         self.SetSigma(ListStreams,0.01)
         
-        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-6,iter=5000)
+        self.OPT=ipopt(ListStreams,ListUnits,self.Type,5,1e-6,iter=0)
         self.OPT.ObjSol=1.087081886709052e+02
         self.TestResult=self.OPT.CompareEstSol(Ctol)
         if (not self.TestResult):
