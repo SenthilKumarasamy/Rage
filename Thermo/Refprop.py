@@ -13,7 +13,7 @@ import RefpropDLLInterface as Rp
 from math import log
 from math import exp
 from numpy import asarray
-from CommonFunctions.Str2Dic import Str2Dic
+#from CommonFunctions.Str2Dic import Str2Dic
 class Refprop():
     Comp=[]
     def __init__(self,Comp):
@@ -28,7 +28,7 @@ class Refprop():
         CompNameList=[]
         self.Xfrac=[0]*len(self.Comp)
         #f=open("D:\\Gyandata\\PythonRage\\RAGE2\\Rage\\Thermo\\" + DBfile,'r')
-        #f=open("C:\\Users\\admin\\workspace\\R1\\Thermo\\" + DBfile,'r')
+        #f=open("C:\\Users\\admin\\workspace\\Rage\\Thermo\\" + DBfile,'r')
         f=open("C:\\Users\\Senthil\\git\\Rage\\Thermo\\"+ DBfile,'r')
         Lines=f.readlines()
         for i in Lines:
@@ -53,7 +53,7 @@ class Refprop():
             ComputedS=Rp.ENTRO(25+273,[1],Rho)
             ActualS=(dHf[i.Id-1]-dGf[i.Id-1])/(25+273)
             i.Sos=ActualS - ComputedS
-            i.MF=Str2Dic(MF[i.Id-1])
+            i.MF=i.Str2Dic(MF[i.Id-1])
             i.MolWt=MW[i.Id-1]
         Rp.PUREFLD(0) #Resetting to mixture mode
     def EnthalpyComp(self,Comp,T,P,State):

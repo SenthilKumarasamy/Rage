@@ -1,11 +1,8 @@
-'''
-Created on 30-Jul-2014
-
-@author: admin
-'''
-#from CommonFunctions import REFPROP as Rp
 from Streams.Material_Stream import Material_Stream
 from Streams.FixedConcStream import FixedConcStream
+## Converts both the measured and estimates from specified external units to internal units such as Kmol/Hr, KiloPascal, Molefraction, deg Celcius.
+#  It also mutiplies the sigma by the conversion factor.
+#  \param ListStreams is a list containing all the Stream objects that includes all energy, material, and fixed compostion streams present in the flow sheet.
 def ToInternalUnits(ListStreams):
     for i in ListStreams:
         if (isinstance(i,Material_Stream) or isinstance(i,FixedConcStream)):

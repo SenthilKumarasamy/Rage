@@ -35,3 +35,60 @@ class Comp:
         ## Stores the molecular weight of the component.
         #  This is stored while creating the thermodynamic object such as Refprop.
         self.MolWt=0
+    
+    ## This function converts a string representing a molecular formula to a dictionary.
+    #  \param str is a string representing the molecular formula of the component such as 'H2O', '(NH4)2CO3'
+    #  \returns a dictionary with keys being the symbols of the elements present in the component and
+    #   the values being the number of atoms of the respective element present in the component.
+    def Str2Dic(self,str):
+        ## \var ElementList has to be updated to include all the elements.
+        ElementList=['C','H','O','S','N','He','Ar','Cl','Br','Ca','P'] 
+        start=[]
+        end=[]
+        val=[]
+        strlen=len(str)
+        DigitCount=0
+        for i in range(strlen):
+            if (i==0):
+                start.append(i)
+            elif (str[i].isupper()):
+                if (DigitCount==0): 
+                    end.append(i-1)
+                    val.append(1)
+                    start.append(i)
+                else:
+                    end.append(i-DigitCount -1)
+                    val.append(int(str[i-DigitCount:i]))
+                    start.append(i)
+                    DigitCount=0
+            elif (str[i].isdigit()):
+                DigitCount=DigitCount+1
+            if (i==(strlen-1)):
+                if (DigitCount==0):
+                    end.append(i)
+                    val.append(1)
+                else:
+                    end.append(i-DigitCount)
+                    val.append(int(str[i-DigitCount+1:i+1]))
+                    DigitCount=0
+        '''Extracting the Symbols from the string '''            
+        Temp=[]
+        for i in range(len(start)):
+            Temp.append(str[start[i]:end[i]+1])
+        '''Validation of the symbols and creating a unique list of symbol '''
+        Element=[]
+        ElementIndex=[]
+        for ind,i in enumerate(Temp):
+            if (i not in ElementList):
+                print 'Invalid Symbol for an element of a Component'
+                exit()
+            if (i not in Element):
+                Element.append(i)
+                ElementIndex.append(val[ind])
+            else:
+                ElementIndex[Element.index(i)]=ElementIndex[Element.index(i)]+val[ind]
+        ''' Creating a dictionary'''
+        Dic={}
+        for ind,i in enumerate(Element):
+            Dic[i]=ElementIndex[ind]
+        return Dic

@@ -11,7 +11,7 @@ class PreReformer(EquilibriumReactor):
         for i in Rxn.Coef.keys():
             Prod=Prod*(self.Pstrm.CTag[i].Est)**(Rxn.Coef[i])
         Prod=Prod*(self.Pstrm.PTag.Est/100.0)**mu
-        T=self.Pstrm.TTag.Est+self.EquEff[Rxn]+273
+        T=self.Pstrm.TTag.Est+Rxn.EquTempApp+273
         Z=(1000.0/T)-1.0
         if (sum(Rxn.Coef.values())==-2):
             ## Equilibrium Constant.

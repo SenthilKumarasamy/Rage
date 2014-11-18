@@ -3,7 +3,7 @@ from numpy import asarray
 from math import log
 from Units.Reactor import Reactor
 class EquilibriumReactor(Reactor):
-    def __init__(self,Name,Rstrm,Pstrm,Qstrm,Rxn,EquEff=[],ExoEndoFlag=1,dp=0):
+    def __init__(self,Name,Rstrm,Pstrm,Qstrm,Rxn,ExoEndoFlag=1,dp=0):#EquEff=[],
 #===================Validation Starts======================================
         self.Name=Name        
         if ((ExoEndoFlag != -1) and (ExoEndoFlag != 1)):
@@ -72,26 +72,26 @@ class EquilibriumReactor(Reactor):
 #                 self.EquEff[i]=1.0
 #===========================End of Equilibrium Effectiveness factor=========================================================
 #==========================Approach to Equilibrium=====================================
-        self.EquEff={}
-        if (len(Rxn)==len(EquEff)):
-             for ind,i in enumerate(EquEff):
-                self.EquEff[Rxn[ind]]=i
-        else:
-             if (EquEff!=[]):
-                 print 'Warning in Unit ',self.Name, ' :','No. of Equilibrium effectiveness factors not equal to no. of reactions'
-                 print 'Ignoring the Equilibrium Effectiveness factor'
-             else:
-                 print 'Warning in Unit ',self.Name, ' :','Equilibrium effectiveness factors are not specified.'
-                 print 'Ignoring the Equilibrium Effectiveness factor'
-             for i in Rxn:
-                 self.EquEff[i]=0.0
+#         self.EquEff={}
+#         if (len(Rxn)==len(EquEff)):
+#              for ind,i in enumerate(EquEff):
+#                 self.EquEff[Rxn[ind]]=i
+#         else:
+#              if (EquEff!=[]):
+#                  print 'Warning in Unit ',self.Name, ' :','No. of Equilibrium effectiveness factors not equal to no. of reactions'
+#                  print 'Ignoring the Equilibrium Effectiveness factor'
+#              else:
+#                  print 'Warning in Unit ',self.Name, ' :','Equilibrium effectiveness factors are not specified.'
+#                  print 'Ignoring the Equilibrium Effectiveness factor'
+#              for i in Rxn:
+#                  self.EquEff[i]=0.0
 #========================End of Approach to Equilibrium=====================
 #====================================Validation ends=================================        
         self.Rstrm=Rstrm
         self.Pstrm=Pstrm
         self.Qstrm=Qstrm
         self.Dp=dp
-        self.perturb=1e-2
+        self.perturb=1e-6
         self.EFlag=ExoEndoFlag
         self.Rxn=Rxn
 #         self.RxnExt={}
@@ -179,7 +179,7 @@ class EquilibriumReactor(Reactor):
         for j in Rxn.Coef.keys():
             if (fu[j]!=0.0):
                 Prod = Prod * (fu[j]/100.00)**(Rxn.Coef[j])
-        K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State,self.EquEff[Rxn])
+        K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State,Rxn.EquTempApp)
         #K=self.EquEff[Rxn]*self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)
         #Resid=(K - Prod)
         Resid=(1 - Prod/K)
@@ -211,6 +211,16 @@ class EquilibriumReactor(Reactor):
                 i.Est=x
                 dhdt=(f1-f_1)/(2*dx)
                 GDic[i]=dhdt
+            
+            x=j.EquTempApp
+            dx=self.perturb if (x==0) else x*self.perturb
+            j.EquTempApp=x+dx
+            f1=self.EquilibriumConstraint(j)
+            j.EquTempApp=x-dx
+            f_1=self.EquilibriumConstraint(j)
+            j.EquTempApp=x
+            dhdt=(f1-f_1)/(2*dx)
+            GDic[j]=dhdt
             ECGradDic[j]=GDic
         return ECGradDic
     
@@ -242,7 +252,7 @@ class EquilibriumReactor(Reactor):
                         dhdt=(f11-f1_1-f_11+f_1_1)/(4*dx*dy)
                         HDic[(i,j)]=dhdt
                         HDic[(j,i)]=dhdt
-                    elif (ind1==ind1):
+                    elif (ind1==ind2):
                         x=i.Est
                         f0=self.EquilibriumConstraint(k)
                         dx=i.Est*self.perturb
@@ -253,6 +263,36 @@ class EquilibriumReactor(Reactor):
                         i.Est=x
                         dhdt=(f1-2*f0+f_1)/(dx**2)
                         HDic[(i,i)]=dhdt
+                x=i.Est
+                y=k.EquTempApp
+                dx=i.Est*self.perturb
+                dy=self.perturb if (y==0) else k.EquTempApp*self.perturb
+                i.Est=x+dx
+                k.EquTempApp=y+dy
+                f11=self.EquilibriumConstraint(k)
+                k.EquTempApp=y-dy
+                f1_1=self.EquilibriumConstraint(k)
+                i.Est=x-dx
+                f_1_1=self.EquilibriumConstraint(k)
+                k.EquTempApp=y+dy
+                f_11=self.EquilibriumConstraint(k)
+                i.Est=x
+                k.EquTempApp=y
+                dhdt=(f11-f1_1-f_11+f_1_1)/(4*dx*dy)
+                HDic[(i,k)]=dhdt
+                HDic[(k,i)]=dhdt
+                
+            y=k.EquTempApp
+            f0=self.EquilibriumConstraint(k)
+            dy=self.perturb if (y==0)else k.EquTempApp*self.perturb
+            k.EquTempApp=y+dy
+            f1=self.EquilibriumConstraint(k)
+            k.EquTempApp=y-dy
+            f_1=self.EquilibriumConstraint(k)
+            k.EquTempApp=y
+            dhdt=(f1-2*f0+f_1)/(dx**2)
+            HDic[(k,k)]=dhdt
+            
             ECHessDic[k]=HDic
         return ECHessDic
     
@@ -285,6 +325,8 @@ class EquilibriumReactor(Reactor):
             for k in j.CTag.keys():
                 if (j.CTag[k].Flag!=2):
                     J[ind+indRxn,j.CTag[k].Xindex]=ECGradDic[i][j.CTag[k]]
+            if (i.EquTempAppFlag !=2):
+                J[ind+indRxn,i.EquTempAppXindex]=ECGradDic[i][i]
         return J
     
     def ComponentBalJacoNZP(self):
@@ -323,6 +365,9 @@ class EquilibriumReactor(Reactor):
                 if (j.CTag[k].Flag!=2):
                     row.append(ind+indRxn)
                     col.append(j.CTag[k].Xindex)
+            if (i.EquTempAppFlag != 2):
+                row.append(ind+indRxn)
+                col.append(i.EquTempAppXindex)
         return row,col
     
     def ComponentBalHessNZP(self):
@@ -349,6 +394,9 @@ class EquilibriumReactor(Reactor):
                 if (i.TTag.Flag !=2 and i.CTag[j].Flag !=2):
                     List[ind1+ind2].append((i.TTag.Xindex,i.CTag[j].Xindex))
                     List[ind1+ind2].append((i.CTag[j].Xindex,i.TTag.Xindex))
+            if (i.TTag.Flag != 2 and m.EquTempAppFlag != 2):
+                List[ind1+ind2].append((i.TTag.Xindex,m.EquTempAppXindex))
+                List[ind1+ind2].append((m.EquTempAppXindex,i.TTag.Xindex))
                  
             if (i.PTag.Flag !=2):
                 List[ind1+ind2].append((i.PTag.Xindex,i.PTag.Xindex))
@@ -356,6 +404,9 @@ class EquilibriumReactor(Reactor):
                 if (i.PTag.Flag !=2 and i.CTag[j].Flag !=2):
                     List[ind1+ind2].append((i.PTag.Xindex,i.CTag[j].Xindex))
                     List[ind1+ind2].append((i.CTag[j].Xindex,i.PTag.Xindex))
+            if (i.PTag.Flag != 2 and m.EquTempAppFlag != 2):
+                List[ind1+ind2].append((i.PTag.Xindex,m.EquTempAppXindex))
+                List[ind1+ind2].append((m.EquTempAppXindex,i.PTag.Xindex))
                  
             for i1,k in enumerate(i.CTag.keys()):
                 for i2,j in enumerate(i.CTag.keys()):
@@ -364,6 +415,11 @@ class EquilibriumReactor(Reactor):
                             List[ind1+ind2].append((i.CTag[k].Xindex,i.CTag[j].Xindex))
                             if (i1!=i2):
                                 List[ind1+ind2].append((i.CTag[j].Xindex,i.CTag[k].Xindex))
+                if (i.CTag[k].Flag != 2 and m.EquTempAppFlag != 2):
+                    List[ind1+ind2].append((i.CTag[k].Xindex,m.EquTempAppXindex))
+                    List[ind1+ind2].append((m.EquTempAppXindex,i.CTag[k].Xindex))
+            if (m.EquTempAppFlag != 2):
+                List[ind1+ind2].append((m.EquTempAppXindex,m.EquTempAppXindex))
         return List
     
     def ComponentBalHess(self):
@@ -394,6 +450,9 @@ class EquilibriumReactor(Reactor):
                 if (i.TTag.Flag !=2 and i.CTag[k].Flag !=2):
                     Dic[(i.TTag.Xindex,i.CTag[k].Xindex)]=ECHessDic[j][(i.TTag,i.CTag[k])]
                     Dic[(i.CTag[k].Xindex,i.TTag.Xindex)]=ECHessDic[j][(i.TTag,i.CTag[k])]
+            if (i.TTag.Flag != 2 and j.EquTempAppFlag != 2):
+                Dic[(i.TTag.Xindex,j.EquTempAppXindex)]=ECHessDic[j][(i.TTag,j)]
+                Dic[(j.EquTempAppXindex,i.TTag.Xindex)]=ECHessDic[j][(i.TTag,j)]
                  
             if (i.PTag.Flag !=2):
                 Dic[(i.PTag.Xindex,i.PTag.Xindex)]=ECHessDic[j][(i.PTag,i.PTag)]
@@ -401,6 +460,9 @@ class EquilibriumReactor(Reactor):
                 if (i.PTag.Flag !=2 and i.CTag[k].Flag !=2):
                     Dic[(i.PTag.Xindex,i.CTag[k].Xindex)]=ECHessDic[j][(i.PTag,i.CTag[k])]
                     Dic[(i.CTag[k].Xindex,i.PTag.Xindex)]=ECHessDic[j][(i.PTag,i.CTag[k])]
+            if (i.PTag.Flag != 2 and j.EquTempAppFlag != 2):
+                Dic[(i.PTag.Xindex,j.EquTempAppXindex)]=ECHessDic[j][(i.PTag,j)]
+                Dic[(j.EquTempAppXindex,i.PTag.Xindex)]=ECHessDic[j][(i.PTag,j)]
                  
             for ind1,k in enumerate(i.CTag.keys()):
                 for ind2,m in enumerate(i.CTag.keys()):
@@ -409,5 +471,10 @@ class EquilibriumReactor(Reactor):
                             Dic[(i.CTag[k].Xindex,i.CTag[m].Xindex)]=ECHessDic[j][(i.CTag[k],i.CTag[m])]
                             if (ind1!=ind2):
                                 Dic[(i.CTag[m].Xindex,i.CTag[k].Xindex)]=ECHessDic[j][(i.CTag[k],i.CTag[m])]
+                if (i.CTag[k].Flag != 2 and j.EquTempAppFlag != 2):
+                    Dic[(i.CTag[k].Xindex,j.EquTempAppXindex)]=ECHessDic[j][(i.CTag[k],j)]
+                    Dic[(j.EquTempAppXindex,i.CTag[k].Xindex)]=ECHessDic[j][(i.CTag[k],j)]
+            if (j.EquTempAppFlag != 2):
+                Dic[(j.EquTempAppXindex,j.EquTempAppXindex)]=ECHessDic[j][(j,j)]
             List.append(Dic)
         return List

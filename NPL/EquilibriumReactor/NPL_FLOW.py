@@ -20,8 +20,12 @@ from Units.Heater import Heater
 from Units.Mixer import Mixer
 from Units.Reactor import Reactor
 from Units.EquilibriumReactor import EquilibriumReactor
+from Units.SteamReformer import SteamReformer
+from Units.PreReformer import PreReformer
+from Units.ShiftReactor import ShiftReactor
 from Units.HeatExchanger import HeatExchanger
 from Units.Seperator import Seperator
+from Units.PSA import PSA
 from Units.Splitter import Splitter
 from Units.ElementBalanceReactor import ElementBalanceReactor
 from optim.ipopt import ipopt
@@ -30,7 +34,7 @@ from CommonFunctions.ToInternalUnits import ToInternalUnits
 from CommonFunctions.ToExternalUnits import ToExternalUnits
 from CommonFunctions.Write2File import Write2File
 from Thermo.Refprop import Refprop
-from GrossErrorDetection.GLRTest import GLR
+from GrossErrorDetection.GLRTest1 import GLR
 
 if __name__=="__main__":
     
@@ -66,6 +70,25 @@ if __name__=="__main__":
     ListStreams=[]
     ListUnits=[]
     
+    '''Stream NG1a(1) Natural gas from GAIL'''
+    FI4133=Sensor('FI4133',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    TI4140a=Sensor('TI4140a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    PIC4106a=Sensor('PIC4106a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    N2_NG1a=Sensor('N2_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    CH4_NG1a=Sensor('CH4_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C2H6_NG1a=Sensor('C2H6_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C3H8_NG1a=Sensor('C3H8_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C4H10_NG1a=Sensor('C4H10_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C5H12_NG1a=Sensor('C5H12_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C6H14_NG1a=Sensor('C6H14_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    CO2_NG1a=Sensor('CO2_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    CTag={CH4:CH4_NG1a,N2:N2_NG1a,C2H6:C2H6_NG1a,C3H8:C3H8_NG1a,C4H10:C4H10_NG1a,CO2:CO2_NG1a,C5H12:C5H12_NG1a,C6H14:C6H14_NG1a}
+    #CTag={CH4:0.92,N2:0.08}
+    #StrmNG1=FixedConcStream('StrmNG1',FI4130,TI4140,PIC4107,2,T1,CTag,'xfrac')
+    StrmNG1a=Material_Stream('StrmNG1a',FI4133,TI4140a,PIC4106a,2,T1,CTag)
+    StrmNG1a.Describe='Natural Gas from GAIL'
+    ListStreams.append(StrmNG1a)
+    
     '''Stream NG1(1) Natural gas from GAIL'''
     FI4130=Sensor('FI4130',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI4140=Sensor('TI4140',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -84,6 +107,11 @@ if __name__=="__main__":
     StrmNG1=Material_Stream('StrmNG1',FI4130,TI4140,PIC4106,2,T1,CTag)
     StrmNG1.Describe='Natural Gas from GAIL'
     ListStreams.append(StrmNG1)
+    
+    ''' Defining Splitter SPL1a'''
+    SPL1a=Splitter('SPL1a',StrmNG1a,[StrmNG1])
+    SPL1a.Describe='Splitter that splits the NG from GAIL into one  stream in order to handle multiple flow sensors'
+    ListUnits.append(SPL1a)       
                              
     '''Defining Stream NG2(11) Fuel to Furnace'''
     FI4131=Sensor('FI4131',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -314,7 +342,7 @@ if __name__=="__main__":
     H2_NS3=Sensor('H2_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     H2O_NS3=Sensor('H2O_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO_NS3=Sensor('CO_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CTag={N2:N2_NS3,CH4:CH4_NS3,H2:H2_NS3,H2O:H2O_NS3,CO:CO_NS3}#C2H6:C2H6_NS3,C3H8:C3H8_NS3,C4H10:C4H10_NS3,CO2:CO2_NS3,C5H12:C5H12_NS3,C6H14:C6H14_NS3
+    CTag={N2:N2_NS3,CH4:CH4_NS3,H2:H2_NS3,H2O:H2O_NS3,CO:CO_NS3,CO2:CO2_NS3}#C2H6:C2H6_NS3,C3H8:C3H8_NS3,C4H10:C4H10_NS3,CO2:CO2_NS3,C5H12:C5H12_NS3,C6H14:C6H14_NS3
     StrmNS3=Material_Stream('StrmNS3',FU_NS3,TI3119,PI4132,2,T1,CTag)
     StrmNS3.Describe='Pre-Reformer outlet1'
     ListStreams.append(StrmNS3)
@@ -333,7 +361,7 @@ if __name__=="__main__":
      
      
                             
-    '''Definig REX1 (PreReformer1)'''
+    '''Defining REX1 (PreReformer1)'''
     REX1=Reactor('REX1',StrmNS2,StrmNS3,[E2],[RE1,RE2,RE3,RE4,RE5],ExoEndoFlag=1)
     REX1.Describe='Pre-Reformer'
     ListUnits.append(REX1)
@@ -353,9 +381,12 @@ if __name__=="__main__":
     StrmNS3a.Describe='Pre-Reformer outlet2'
     ListStreams.append(StrmNS3a)
       
-    '''Defining the Equilibrium Reactions happening in the Pre-reformer'''
-    RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1])
-    RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1])
+#     '''Defining the Equilibrium Reactions happening in the Pre-reformer'''
+#     RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1])
+#     RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1])
+
+    RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1],EquTempAppFlag=2,EquTempApp=10.1)
+    RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=0.0)
       
     '''Defining Energy Stream E2a'''
     E2a=Energy_Stream('E2a',0)
@@ -363,7 +394,8 @@ if __name__=="__main__":
     ListStreams.append(E2a)
       
     '''Definig REX1 (PreReformer2)'''
-    REX1a=EquilibriumReactor('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],ExoEndoFlag=1)
+    #REX1a=EquilibriumReactor('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],ExoEndoFlag=1)
+    REX1a=PreReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],ExoEndoFlag=1)
     REX1a.Describe='Pre-Reformer'
     ListUnits.append(REX1a)
                           
@@ -440,11 +472,13 @@ if __name__=="__main__":
     ListStreams.append(E4)
      
     '''Defining the Reactions happening in steam reformer'''
-    RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3])
+    RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3],EquTempAppFlag=2,EquTempApp=3.6)
+    RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=0.0)
                                  
     '''Defining REX2 (Steam Reformer) '''
     #REX2=ElementBalanceReactor('REX2',StrmNS5,StrmNS6,[E4],ExoEndoFlag=1)
-    REX2=EquilibriumReactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
+    REX2=SteamReformer('REX2',StrmNS5,StrmNS6,[E4],[RE7a,RE8],ExoEndoFlag=1)
+    #REX2=EquilibriumReactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
     #REX2=Reactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
     REX2.Describe='Steam Reformer (Located inside the furnace)'
     ListUnits.append(REX2)
@@ -494,12 +528,13 @@ if __name__=="__main__":
     ListStreams.append(E5)
      
     '''defining shift reaction'''
-    RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1])
+    RE8a=Reaction('RE8a',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=0.1)
                                
     '''Defining REX3 (Adiabatic Reactor) (High Temperature Shift Reactor)'''
     #REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
     #REX3=Reactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
-    REX3=EquilibriumReactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
+    #REX3=EquilibriumReactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
+    REX3=ShiftReactor('REX3',StrmNS7,StrmHT1,[E5],[RE8a],ExoEndoFlag=-1)
     REX3.Describe='HT Shift Reactor'
     ListUnits.append(REX3)
                              
@@ -560,10 +595,14 @@ if __name__=="__main__":
     E6=Energy_Stream('E6',0)
     E6.Q.Flag=2
     ListStreams.append(E6)
+    
+    '''defining shift reaction'''
+    RE8b=Reaction('RE8b',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=19.3)
                                  
     '''Defining REX4 (Low Temp Shift Reactor) '''
     #REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
-    REX4=EquilibriumReactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
+    #REX4=EquilibriumReactor('REX4',StrmHT3,StrmLT1,[E6],[RE8b],ExoEndoFlag=-1)
+    REX4=ShiftReactor('REX4',StrmHT3,StrmLT1,[E6],[RE8b],ExoEndoFlag=-1)
     #REX4=Reactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
     REX4.Describe='LT Shift Reactor'
     ListUnits.append(REX4)
@@ -897,7 +936,8 @@ if __name__=="__main__":
     ListStreams.append(StrmLT5)
                  
     '''Defining Seperator SEP2'''
-    SEP2=Seperator('SEP2',StrmLT3,[StrmLT4,StrmLT5])
+    #SEP2=Seperator('SEP2',StrmLT3,[StrmLT4,StrmLT5])
+    SEP2=PSA('SEP2',StrmLT3,[StrmLT4,StrmLT5],{(StrmLT5,H2):0.845})
     SEP2.Describe='PSA Unit'
     ListUnits.append(SEP2)
                  
@@ -951,9 +991,9 @@ if __name__=="__main__":
     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
     GLR1=GLR(opt1)
     Write2File(ListStreams,'GED.csv')
-    GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
-    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
-    GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
+#     GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
+#     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
+#     GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
    
     f1=open('Residuals.csv','w') 
     Resid=[]

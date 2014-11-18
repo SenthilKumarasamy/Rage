@@ -3,7 +3,7 @@ from numpy import shape
 from numpy import asarray
 from numpy.linalg import qr
 from numpy.linalg import inv
-from numpy.linalg import matrix_rank
+from numpy.linalg import *
 from numpy.linalg import svd
 from numpy import dot
 from numpy import bmat
@@ -230,12 +230,18 @@ class GLR():
             FTemp=dot(dot(Fki.T,Vinv),r)
             FTemp1=inv(dot(dot(Fki.T,Vinv),Fki))
             GLRStatistic[ind]=dot(dot(FTemp.T,FTemp1),FTemp)
-            ErrPos=GLRStatistic.index(max(GLRStatistic))
+        ErrPos=GLRStatistic.index(max(GLRStatistic))# modified
         return ErrPos,GLRStatistic[ErrPos]
     
     def UpdateList(self,Detected,ToBeTested,PresentError):
         Detected.append(ToBeTested[PresentError])
         ToBeTested.pop(PresentError)
+        Fk=self.Abar[:,Detected]
+        #R=dot(Fk.T,Fk)
+        s=shape(Fk)
+        if (matrix_rank(Fk,1e-2)<min(s)):
+            print 'condition number ',cond(R)
+            Detected.pop(len(Detected)-1)
         return Detected,ToBeTested
     
     def WriteGLRFlag2Sensors(self,Detected,XmIndex):

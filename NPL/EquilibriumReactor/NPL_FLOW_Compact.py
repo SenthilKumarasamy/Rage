@@ -174,26 +174,44 @@ if __name__=="__main__":
     StrmH1.Describe='Hydrogen from PSA unit to be mixed with NG for desulphurisation'
     ListStreams.append(StrmH1)
                                      
-    ''' Defining Stream NG4 (4) Cold side inlet of heat exchanger E-2'''
-    FU_NG4=Sensor('FU_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    TU_NG4=Sensor('TU_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    PU_NG4=Sensor('PU_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    N2_NG4=Sensor('N2_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CH4_NG4=Sensor('CH4_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C2H6_NG4=Sensor('C2H6_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C3H8_NG4=Sensor('C3H8_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C4H10_NG4=Sensor('C4H10_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C5H12_NG4=Sensor('C5H12_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C6H14_NG4=Sensor('C6H14_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CO2_NG4=Sensor('CO2_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    H2_NG4=Sensor('H2_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CTag={N2:N2_NG4,CH4:CH4_NG4,H2:H2_NG4,C2H6:C2H6_NG4,C3H8:C3H8_NG4,C4H10:C4H10_NG4,CO2:CO2_NG4,C5H12:C5H12_NG4,C6H14:C6H14_NG4}
-    StrmNG4=Material_Stream('StrmNG4',FU_NG4,TU_NG4,PU_NG4,2,T1,CTag)
-    StrmNG4.Describe='Cold-side inlet of Heat Exchanger E-2'
-    ListStreams.append(StrmNG4)
+#     ''' Defining Stream NG4 (4) Cold side inlet of heat exchanger E-2'''
+#     FU_NG4=Sensor('FU_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     TU_NG4=Sensor('TU_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     PU_NG4=Sensor('PU_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     N2_NG4=Sensor('N2_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CH4_NG4=Sensor('CH4_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     C2H6_NG4=Sensor('C2H6_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     C3H8_NG4=Sensor('C3H8_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     C4H10_NG4=Sensor('C4H10_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     C5H12_NG4=Sensor('C5H12_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     C6H14_NG4=Sensor('C6H14_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CO2_NG4=Sensor('CO2_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     H2_NG4=Sensor('H2_NG4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CTag={N2:N2_NG4,CH4:CH4_NG4,H2:H2_NG4,C2H6:C2H6_NG4,C3H8:C3H8_NG4,C4H10:C4H10_NG4,CO2:CO2_NG4,C5H12:C5H12_NG4,C6H14:C6H14_NG4}
+#     StrmNG4=Material_Stream('StrmNG4',FU_NG4,TU_NG4,PU_NG4,2,T1,CTag)
+#     StrmNG4.Describe='Cold-side inlet of Heat Exchanger E-2'
+#     ListStreams.append(StrmNG4)
+    
+    ''' Defining a Stream NG5 (5) Cold side outlet of heat exchanger E-2'''
+    FIC3105=Sensor('FIC3105',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    TIC4101=Sensor('TIC4101',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    PIC3112=Sensor('PIC3112',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    N2_NG5=Sensor('N2_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    CH4_NG5=Sensor('CH4_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C2H6_NG5=Sensor('C2H6_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C3H8_NG5=Sensor('C3H8_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C4H10_NG5=Sensor('C4H10_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C5H12_NG5=Sensor('C5H12_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    C6H14_NG5=Sensor('C6H14_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    CO2_NG5=Sensor('CO2_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    H2_NG5=Sensor('H2_NG5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    CTag={N2:N2_NG5,CH4:CH4_NG5,H2:H2_NG5,C2H6:C2H6_NG5,C3H8:C3H8_NG5,C4H10:C4H10_NG5,CO2:CO2_NG5,C5H12:C5H12_NG5,C6H14:C6H14_NG5}
+    StrmNG5=Material_Stream('StrmNG5',FIC3105,TIC4101,PIC3112,2,T1,CTag)
+    StrmNG5.Describe='Cold-side outlet of Heat Exchanger E-2'
+    ListStreams.append(StrmNG5)
                                      
     '''Defining Mix1'''
-    MIX1=Mixer('MIX1',[StrmNG3,StrmH1],StrmNG4)
+    MIX1=Mixer('MIX1',[StrmNG3,StrmH1],StrmNG5) #StrmNG4
     MIX1.Describe='Mixer that mixes Process NG with a part of Hydrogen obtained from PSA'
     ListUnits.append(MIX1)
                                    
@@ -242,7 +260,7 @@ if __name__=="__main__":
     ListStreams.append(StrmNS1)
                                      
     ''' Defining MIX2 (D-10)'''
-    MIX2=Mixer('MIX2',[StrmNG4,StrmST1],StrmNS1)
+    MIX2=Mixer('MIX2',[StrmNG5,StrmST1],StrmNS1) #StrmNG4
     MIX2.Describe='Mixer that mixes steam with the feed to pre-reformer'
     ListUnits.append(MIX2)
                                 
@@ -297,8 +315,8 @@ if __name__=="__main__":
     ListStreams.append(StrmNS3a)
        
     '''Defining the Equilibrium Reactions happening in the Pre-reformer'''
-    RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1])
-    RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1])
+    RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1],EquTempAppFlag=2,EquTempApp=10.1)
+    RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=0.0)
        
     '''Defining Energy Stream E2a'''
     E2a=Energy_Stream('E2a',0)
@@ -307,7 +325,7 @@ if __name__=="__main__":
        
     '''Definig REX1 (PreReformer2)'''
     #REX1a=EquilibriumReactor('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[0],ExoEndoFlag=1)
-    REX1a=PreReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[10.1,0],ExoEndoFlag=1)
+    REX1a=PreReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],ExoEndoFlag=1)
     #REX1a=SteamReformer('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],[-10.1],ExoEndoFlag=1)
     REX1a.Describe='Pre-Reformer'
     ListUnits.append(REX1a)
@@ -362,15 +380,15 @@ if __name__=="__main__":
     ListStreams.append(E4)
        
     '''Defining the Reactions happening in steam reformer'''
-    RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3])
+    RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3],EquTempAppFlag=2,EquTempApp=3.6)
       
     '''defining shift reaction'''
-    RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1])
+    RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=0.0)
                                    
     '''Defining REX2 (Steam Reformer) '''
     #REX2=ElementBalanceReactor('REX2',StrmNS5,StrmNS6,[E4],ExoEndoFlag=1)
     #REX2=EquilibriumReactor('REX2',StrmNS4,StrmNS6,[E4],[RE7a,RE8],[0,0],ExoEndoFlag=1)
-    REX2=SteamReformer('REX2',StrmNS4,StrmNS6,[E4],[RE7a,RE8],[3.6,0],ExoEndoFlag=1)
+    REX2=SteamReformer('REX2',StrmNS4,StrmNS6,[E4],[RE7a,RE8],ExoEndoFlag=1)
     #REX2=Reactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
     REX2.Describe='Steam Reformer (Located inside the furnace)'
     ListUnits.append(REX2)
@@ -391,14 +409,14 @@ if __name__=="__main__":
     ListStreams.append(E5)
     
     '''defining shift reaction'''
-    RE8a=Reaction('RE8a',[CO,H2O,CO2,H2],[-1,-1,1,1])
+    RE8a=Reaction('RE8a',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=0.1)
       
                                 
     '''Defining REX3 (Adiabatic Reactor) (High Temperature Shift Reactor)'''
     #REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
     #REX3=Reactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
     #REX3=EquilibriumReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8],[0.0],ExoEndoFlag=-1)
-    REX3=ShiftReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8a],[0.1],ExoEndoFlag=-1)
+    REX3=ShiftReactor('REX3',StrmNS6,StrmHT1,[E5],[RE8a],ExoEndoFlag=-1)
     REX3.Describe='HT Shift Reactor'
     ListUnits.append(REX3)
                               
@@ -424,13 +442,13 @@ if __name__=="__main__":
     ListStreams.append(E6)
     
     '''defining shift reaction'''
-    RE8b=Reaction('RE8b',[CO,H2O,CO2,H2],[-1,-1,1,1])
+    RE8b=Reaction('RE8b',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=19.3)
     
                                   
     '''Defining REX4 (Low Temp Shift Reactor) '''
     #REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
     #REX4=EquilibriumReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8],[0.0],ExoEndoFlag=-1)
-    REX4=ShiftReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8b],[19.3],ExoEndoFlag=-1)
+    REX4=ShiftReactor('REX4',StrmHT1,StrmLT1,[E6],[RE8b],ExoEndoFlag=-1)
     #REX4=Reactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
     REX4.Describe='LT Shift Reactor'
     ListUnits.append(REX4)
@@ -615,6 +633,8 @@ if __name__=="__main__":
       
     '''Defining Mixer'''
     MIX7=Mixer('MIX7',[StrmW1,StrmW4],StrmST8)
+    ListUnits.append(MIX7)
+    MIX7.Describe='Mixer that mixes steam from RG and FG boilers.'
       
                   
                   
@@ -689,9 +709,9 @@ if __name__=="__main__":
     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=50000)
     GLR1=GLR(opt1)
     Write2File(ListStreams,'GED.csv')
-    GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
-    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=100000)
-    GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
+#     GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
+#     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=100000)
+#     GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
    
     f1=open('Residuals.csv','w') 
     Resid=[]

@@ -1,6 +1,9 @@
 from Streams.Material_Stream import Material_Stream
 from Streams.FixedConcStream import FixedConcStream
 from Streams.Energy_Stream import Energy_Stream
+## This function writes the reconciled output in the specified file.
+#  \param ListStreams is a list containing all the streams in the flow sheet.
+#  \param FileName refers to the full path of the file
 def Write2File(ListStreams,FileName,):
 	f=open(FileName,'w')
 	for i in ListStreams:

@@ -1,5 +1,8 @@
 from Streams.Material_Stream import Material_Stream
 from Streams.FixedConcStream import FixedConcStream
+## Converts both the measured and estimates from internal units such as Kmol/Hr, KiloPascal, Molefraction, deg Celcius to specified external units.
+#  It also mutiplies the sigma by the conversion factor.
+#  \param ListStreams is a list containing all the Stream objects that includes all energy, material, and fixed compostion streams present in the flow sheet.
 def ToExternalUnits(ListStreams):
     for i in ListStreams:
         if (isinstance(i,Material_Stream) or isinstance(i,FixedConcStream)):
