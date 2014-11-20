@@ -72,7 +72,6 @@ class PSA(Seperator):
     
     def ComponentBalJaco(self,len1):
         J=zeros((self.LenCompRes,len1))
-        print J.shape
         key=self.input[0].CTag.keys()
         for ind,i in enumerate(key[:-1]):
             for j in self.output:

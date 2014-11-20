@@ -12,12 +12,7 @@ class EquilibriumReactor(Reactor):
         if (Rstrm==Pstrm):
             print 'Reactant and Product streams are the same. They have to be different'
             exit()
-#         elif (len(Rstrm)>1):
-#             print 'More than one reactant stream is defined. But only one reactant stream is allowed'
-#             exit()
-#         elif (len(Pstrm)>1):
-#             print 'More than one product stream is defined. But only one product stream is allowed'
-#             exit()
+
         # Check the uniqueness of Qstrm
         C=[]
         for i in Qstrm:
@@ -51,41 +46,7 @@ class EquilibriumReactor(Reactor):
             if (i not in Pstrm.CTag.keys()):
                 print 'One of the products of a reaction is not present in the product stream of a reactor'
                 exit()
-#===================Equilibrium Effectiveness factor========================================   
-#         self.EquEff={}
-#         if (len(Rxn)==len(EquEff)):
-#             for ind,i in enumerate(EquEff):
-#                 if (i>1.0):
-#                     print 'Waring in unit ', self.Name,' :','One of the Equilibrium Effectiveness factor is greater than one'
-#                     print 'Setting the concerned Effectiveness factor equal to one'
-#                     self.EquEff[Rxn[ind]]=1.0
-#                 else:
-#                     self.EquEff[Rxn[ind]]=i
-#         else:
-#             if (EquEff!=[]):
-#                 print 'Warning in Unit ',self.Name, ' :','No. of Equilibrium effectiveness factors not equal to no. of reactions'
-#                 print 'Ignoring the Equilibrium Effectiveness factor'
-#             else:
-#                 print 'Warning in Unit ',self.Name, ' :','Equilibrium effectiveness factors are not specified.'
-#                 print 'Ignoring the Equilibrium Effectiveness factor'
-#             for i in Rxn:
-#                 self.EquEff[i]=1.0
-#===========================End of Equilibrium Effectiveness factor=========================================================
-#==========================Approach to Equilibrium=====================================
-#         self.EquEff={}
-#         if (len(Rxn)==len(EquEff)):
-#              for ind,i in enumerate(EquEff):
-#                 self.EquEff[Rxn[ind]]=i
-#         else:
-#              if (EquEff!=[]):
-#                  print 'Warning in Unit ',self.Name, ' :','No. of Equilibrium effectiveness factors not equal to no. of reactions'
-#                  print 'Ignoring the Equilibrium Effectiveness factor'
-#              else:
-#                  print 'Warning in Unit ',self.Name, ' :','Equilibrium effectiveness factors are not specified.'
-#                  print 'Ignoring the Equilibrium Effectiveness factor'
-#              for i in Rxn:
-#                  self.EquEff[i]=0.0
-#========================End of Approach to Equilibrium=====================
+
 #====================================Validation ends=================================        
         self.Rstrm=Rstrm
         self.Pstrm=Pstrm
@@ -94,11 +55,6 @@ class EquilibriumReactor(Reactor):
         self.perturb=1e-6
         self.EFlag=ExoEndoFlag
         self.Rxn=Rxn
-#         self.RxnExt={}
-#         self.RxnExtXindex={}
-#         for i in Rxn:
-#             self.RxnExt[i]=0
-#             self.RxnExtXindex[i]=0
             
         self.ListComp=[]
         for i in self.Pstrm.CTag.keys():
@@ -114,27 +70,6 @@ class EquilibriumReactor(Reactor):
         self.LenEneRes=1
         self.LenPreRes=1
         self.InitialGuessRxnExt() #modified
-#         self.MB_SF=abs(asarray(self.MaterialBalRes()))
-#         self.CB_SF=abs(asarray(self.ComponentBalRes()))
-#         self.EB_SF=abs(asarray(self.EnergyBalRes()))
-#         self.PB_SF=abs(asarray(self.PressureBalRes()))
-#         self.CheckForZero()
-#     
-#     def CheckForZero(self):
-#         Min_SF=1.0
-#         for ind,i in enumerate(self.MB_SF):
-#             if (i<Min_SF):
-#                 self.MB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.CB_SF):
-#             if (i<Min_SF):
-#                 self.CB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.EB_SF):
-#             if (i<Min_SF):
-#                 self.EB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.PB_SF):
-#             if (i<Min_SF):
-#                 self.PB_SF[ind]=Min_SF
-
     
     def ComponentBalRes(self):
         Resid=[]
@@ -157,21 +92,6 @@ class EquilibriumReactor(Reactor):
             Resid.append(self.EquilibriumConstraint(i))      
         return Resid
     
-#     def EquilibriumConstraint(self,Rxn):
-#         Prod=1.0
-#         R=8.314
-#         fu=self.Pstrm.Therm.Fugacity(self.Pstrm)           
-#         for j in Rxn.Coef.keys():
-#             if (fu[j]>1e-6):
-#                 Prod = Prod * (fu[j]/100.00)**(Rxn.Coef[j])
-#             else:
-#                 Prod=0
-#                 break
-#         K=(self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)) # log is removed
-#         Resid=(K - Prod)
-#         #DG=self.Pstrm.Therm.DGRxn(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)
-#         #Resid=(DG+R*self.Pstrm.TTag.Est*Prod)
-#         return Resid
 
     def EquilibriumConstraint(self,Rxn):
         Prod=1.0
@@ -185,14 +105,6 @@ class EquilibriumReactor(Reactor):
         Resid=(1 - Prod/K)
         return Resid
     
-#     def EquilibriumConstraint1(self,Rxn):
-#         Prod=1.0
-#         mu=sum(Rxn.Coef.values())
-#         for i in Rxn.Coef.keys():
-#             Prod=Prod*(self.Pstrm.CTag[i].Est)**(Rxn.Coef[i])
-#         K=self.Pstrm.Therm.EquilibriumConstant(Rxn,self.Pstrm.TTag.Est,self.Pstrm.State)*(self.Pstrm.PTag.Est/100.0)**(-mu)
-#         Resid=(1 - Prod/K)
-#         return Resid
     
     def EquilibriumGradient(self):
         XID=[self.Pstrm.TTag,self.Pstrm.PTag]

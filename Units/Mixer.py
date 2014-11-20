@@ -19,26 +19,7 @@ class Mixer(Seperator):
         self.LenEneRes=1
         self.LenPreRes=1
         self.validation()
-#         self.MB_SF=abs(asarray(self.MaterialBalRes()))
-#         self.CB_SF=abs(asarray(self.ComponentBalRes()))
-#         self.EB_SF=abs(asarray(self.EnergyBalRes()))
-#         self.PB_SF=abs(asarray(self.PressureBalRes()))
-#         self.CheckForZero()
-#     
-#     def CheckForZero(self):
-#         Min_SF=1
-#         for ind,i in enumerate(self.MB_SF):
-#             if (i<Min_SF):
-#                 self.MB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.CB_SF):
-#             if (i<Min_SF):
-#                 self.CB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.EB_SF):
-#             if (i<Min_SF):
-#                 self.EB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.PB_SF):
-#             if (i<Min_SF):
-#                 self.PB_SF[ind]=Min_SF
+
     
     def validation(self):
         C=[]

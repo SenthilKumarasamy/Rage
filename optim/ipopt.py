@@ -70,7 +70,6 @@ class ipopt:
                 self.ExitFlag[i]=self.status
                 if (self.status==0):
                     self.OptimIndex=i
-                    print 'sucess ',i
                     break      
         self.nlp.close()
 #--------------------------Methods called once during initialisation of the object-------------    
@@ -839,32 +838,11 @@ class ipopt:
                     Jaco[start:start+i.LenMatRes][:]=i.MaterialBalJaco(self.Xlen)
                     start=start+i.LenMatRes#1
                     Jaco[start:start+i.LenCompRes][:]=i.ComponentBalJaco(self.Xlen)
-                    #print 'Jacobian length',i.LenCompRes
                     start=start+i.LenCompRes
                     Jaco[start:start+i.LenEneRes][:]=i.EnergyBalJaco(self.Xlen)
                     start=start+i.LenEneRes
                     Jaco[start:start+i.LenPreRes][:]=i.PressureBalJaco(self.Xlen)
                     start=start+i.LenPreRes
-#                      a=i.MaterialBalJaco(self.Xlen)
-#                      for m in range(i.LenMatRes):
-#                          Jaco[start:start+1][:]=a[m,:]/i.MB_SF[m]
-#                          start=start+1
-#                      #start=start+i.LenMatRes#1
-#                      a=i.ComponentBalJaco(self.Xlen)
-#                      for m in range(i.LenCompRes):
-#                          Jaco[start:start+1][:]=a[m,:]/i.CB_SF[m]
-#                          start=start+1
-#                      a=i.EnergyBalJaco(self.Xlen)
-#                      for m in range(i.LenEneRes):
-#                          Jaco[start:start+1][:]=a[m,:]/i.EB_SF[m]
-#                          start=start+1
-#                      #start=start+ i.LenEneRes
-#                      a=i.PressureBalJaco(self.Xlen)
-#                      for m in range(i.LenPreRes):
-#                          Jaco[start:start+1][:]=a[m,:]/i.PB_SF[m]
-#                          start=start+1
-#                     #print i.PressureBalJaco(self.Xlen)
-#                      start=start+ i.LenPreRes
             for i in range(len(self.NonZeroJacoRow)):
                 Ja.append(Jaco[self.NonZeroJacoRow[i]][self.NonZeroJacoCol[i]])
             return np.asarray(Ja) 
@@ -903,7 +881,6 @@ class ipopt:
                 for k in i.Rxn: #modified
                     k.RxnExt=X[k.RxnExtXindex] # modified
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
-                print 'here'
                 print "Object in the list is not defined"
                 quit()   
     
@@ -965,9 +942,6 @@ class ipopt:
                 for k in i.CTag.keys():
                     if (i.CTag[k].Flag!=2):
                         BList.append(abs(i.CTag[k].Est-i.CTag[k].Sol)<Ctol)
-#                         if (not (abs(i.CTag[k].Est-i.CTag[k].Sol)<Ctol)):
-#                             print i.Name,k.Name
-#                             print i.CTag[k].Est,i.CTag[k].Sol
                         
             elif(isinstance(i,Energy_Stream)):
                 if (i.Q.Flag !=2):
@@ -987,8 +961,7 @@ class ipopt:
                     BList.append(abs(i.RxnExt[k]-i.RxnExtSol[k])<Ctol)
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
-                quit()
-        #print BList   
+                quit()  
         self.Pass=all(BList)
         return self.Pass
         

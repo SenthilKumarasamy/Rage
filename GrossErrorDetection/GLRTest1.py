@@ -92,7 +92,6 @@ class GLR():
         Result=True
         while(Result and self.n!=0):
             Result=self.GlobalTest(self.Ti,self.n)
-            print 'Result of Global Test',Result
             if (Result):
                 ErrPos,Tk=self.DetectGEPosition(self.r,self.Vinv,self.Abar,self.Detected,self.ToBeTested)
                 self.Detected,self.ToBeTested=self.UpdateList(self.Detected,self.ToBeTested,ErrPos)
@@ -206,7 +205,6 @@ class GLR():
         U,S,VT=numpy.linalg.svd(BM.T,full_matrices=True)
         IndStart=S.shape[0]
         IndEnd=VT.shape[0]
-        print IndStart,IndEnd
         self.P=VT[IndStart:IndEnd,:]
         Z1=numpy.mat(numpy.zeros((SizeA[0],SizeD[0])))
         E1=numpy.mat(numpy.eye(SizeD[0]))
@@ -216,21 +214,7 @@ class GLR():
         d=G-numpy.dot(J,numpy.mat(Xm).T)
         bbar=numpy.dot(self.P,numpy.bmat([[c],[d]]))
         return Abar,bbar
-
-        
-#     def ComputeProjectionMatrix(self,B,Bcol,Glen):
-#         q,r=numpy.linalg.qr(B,mode='complete')
-#         P=q[:,Bcol:Glen]
-# #         if (not P):
-# #             print 'Projection matrix is empty'
-# #             exit()
-#         return P.T
-    
-#     def ComputeAbarbbar(self,A,B,Xm,Xu,P):
-#         b=dot(A,Xm)+dot(B,Xu)
-#         Abar=dot(P,A)
-#         bbar=dot(P,b)
-#         return Abar,bbar
+       
     
     def ComputeRVinv(self,Abar,bbar,Xmeas,Sigma):
         r=numpy.dot(Abar,numpy.mat([Xmeas]).T)-bbar
@@ -261,7 +245,6 @@ class GLR():
     
     def GlobalTest(self,T,n):
         Tcrit=st.chi2.ppf(0.99,n)
-        print 'Inside Global Test, T, Tcrit', T, Tcrit,n
         if (T>Tcrit):
             GTResult=True
         else:
@@ -289,7 +272,6 @@ class GLR():
         Fk=self.Abar[:,Detected]
         s=numpy.shape(Fk)
         if (numpy.linalg.matrix_rank(Fk)<min(s)):
-            print 'here'
             Detected.pop(len(Detected)-1)
         return Detected,ToBeTested
     

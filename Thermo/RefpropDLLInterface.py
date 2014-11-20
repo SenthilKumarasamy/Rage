@@ -21,16 +21,26 @@
 #  dipole moment                       debye
 #  surface tension                     N/m
 #-------------------------------------------------------------------------------
-
+import sys
+import os
+import platform   
 from ctypes import *
-rp = windll.LoadLibrary("C:\\Program Files\\REFPROP\\refprop.dll")
-#rp = windll.LoadLibrary("C:\\Program Files (x86)\\REFPROP\\refprop.dll")
+
+try:
+    program_files=os.environ['PROGRAMFILES(X86)'] # 64 bit
+except:
+    program_files=os.environ['PROGRAMFILES'] # 32 bit
+
+
+rp = windll.LoadLibrary(program_files+"\\REFPROP\\refprop.dll")
+fpath = program_files+'/refprop/'
+
+    
 k0 = 273.15
 
 MaxComps = 20
-#fpath = 'C:/Program Files (x86)/REFPROP/'
-fpath = 'c:/program files/refprop/'
-fldpath = fpath + 'fluids/'
+
+fldpath= fpath +'fluids/'
 mixpath = fpath + 'mixtures/'
 hfld = create_string_buffer('', 10000)
 hfm = create_string_buffer(fpath + 'fluids/hmx.bnc', 255)
@@ -193,23 +203,3 @@ def SETREF(FluidRef,ixflag, h0, s0, t0, p0, xfrac=[]):
 def SETAGA():
     rp.SETAGAdll(byref(ierr),byref(herr),c_long(255))
     return ierr
-
-# def TPFLSH(t, p, xfrac):
-#     '''flash calculation given temperature and pressure'''
-#     global ierr, herr
-#     global xl, xv
-#     for i in range(len(xfrac)):
-#         x[i]=xfrac[i]  
-#     t = c_double(t)
-#     p = c_double(p)
-#     D, Dl, Dv = c_double(), c_double(), c_double()
-#     q, e, h, s = c_double(), c_double(), c_double(), c_double()
-#     cv, cp = c_double(), c_double()
-#     w = c_double()
-#     rp.TPFLSHdll(byref(t), byref(p), x, byref(D), byref(Dl), byref(Dv), xl, xv, byref(q), byref(e), byref(h), byref(s), byref(cv), byref(cp), byref(w), byref(ierr), byref(herr), c_long(255))
-#     #return D.value, Dl.value, Dv.value, q.value, e.value, h.value, s.value, cv.value, cp.value, w.value
-#     return q.value
-
-#SETUP(Ls,'DEF')
-#print WMOL([0.5,0.25,0.25])
-#print TPRHO(400,101.325,[0.5,0.25,0.25],2,0,0)

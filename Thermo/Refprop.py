@@ -1,10 +1,13 @@
+# import sys
+# import os
+# basepath = os.path.dirname('__file__')
+# filepath = os.path.abspath(os.path.join(basepath, "..",".."))
+# if filepath not in sys.path:
+#     sys.path.append(filepath)
+
 import RefpropDLLInterface as Rp
-# from math import log
-# from math import exp
-# from numpy import asarray
 import numpy
 import math
-#from CommonFunctions.Str2Dic import Str2Dic
 class Refprop():
     Comp=[]
     def __init__(self,Comp):
@@ -18,9 +21,9 @@ class Refprop():
         MW=[]
         CompNameList=[]
         self.Xfrac=[0]*len(self.Comp)
-        #f=open("D:\\Gyandata\\PythonRage\\RAGE2\\Rage\\Thermo\\" + DBfile,'r')
-        #f=open("C:\\Users\\admin\\workspace\\Rage\\Thermo\\" + DBfile,'r')
-        f=open("C:\\Users\\Senthil\\git\\Rage\\Thermo\\"+ DBfile,'r')
+        #str1="C:\\Users\\Senthil\\git\\Rage\\Thermo\\" + DBfile
+        #str1=filepath  + DBfile
+        f=open(DBfile,'r')
         Lines=f.readlines()
         for i in Lines:
             Temp=i.split('\t')
@@ -85,24 +88,6 @@ class Refprop():
         #K = math.exp(-self.DGRxn(Rxn,T,P,State)/(R*Temp))
         K = math.exp(-self.DGRxn(Rxn,T+AppTemp,State)/(R*Temp))
         return K
-        
-#     def EnthalpyStream(self,Stream):
-#         Rp.PUREFLD(0)
-#         key = Stream.CTag.keys()
-#         Hos=0.0
-#         for i in key:
-#             Hos=Hos+i.Hos*Stream.CTag[i].Est # Computing Mixture Offset
-#             if i in self.Comp:
-#                 self.Xfrac[i.CompIndex]=Stream.CTag[i].Est
-#             else:
-#                 self.Xfrac[i.CompIndex]=0.0
-#         Rho,err=Rp.TPRHO(Stream.TTag.Est+273, Stream.PTag.Est, self.Xfrac, Stream.State)
-#         if (err!=0):
-#             print 'Error while calculating density of the stream ',Stream.Name
-#             print 'Error occurred when temperature and pressure are ', Stream.TTag.Est, ' and ', Stream.PTag.Est 
-#             exit()
-#         Hstrm=Rp.ENTHAL(Stream.TTag.Est+273,self.Xfrac,Rho)+Hos
-#         return Hstrm
 
     def EnthalpyStream(self,Stream):
         Rp.PUREFLD(0)

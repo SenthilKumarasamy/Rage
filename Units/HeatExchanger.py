@@ -32,11 +32,6 @@ class HeatExchanger:
         self.validation()
         self.U=self.UEst()
         self.LenPreRes = 2
-#         self.MB_SF=abs(asarray(self.MaterialBalRes()))
-#         self.CB_SF=abs(asarray(self.ComponentBalRes()))
-#         self.EB_SF=abs(asarray(self.EnergyBalRes()))
-#         self.PB_SF=abs(asarray(self.PressureBalRes()))
-#         self.CheckForZero()
     
     def validation(self):
         if (set(self.Shellin.CTag.keys()) !=set(self.Shellout.CTag.keys())):
@@ -48,20 +43,6 @@ class HeatExchanger:
             print 'Tube side inlet and outlet fluids have different set of components'
             exit()
 
-#     def CheckForZero(self):
-#         Min_SF=1.0
-#         for ind,i in enumerate(self.MB_SF):
-#             if (i<Min_SF):
-#                 self.MB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.CB_SF):
-#             if (i<Min_SF):
-#                 self.CB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.EB_SF):
-#             if (i<Min_SF):
-#                 self.EB_SF[ind]=Min_SF
-#         for ind,i in enumerate(self.PB_SF):
-#             if (i<Min_SF):
-#                 self.PB_SF[ind]=Min_SF
     
     def UEst(self):
         Q=(self.Shellin.FTag.Est*self.Shellin.h-self.Shellout.FTag.Est*self.Shellout.h)
