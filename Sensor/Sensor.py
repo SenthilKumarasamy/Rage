@@ -1,4 +1,4 @@
-from test.test_binop import isnum
+#from test.test_binop import isnum
 class Sensor:
     Tag=[]
     Meas=[]
@@ -7,7 +7,7 @@ class Sensor:
     Flag=[]
     Xindex=0
     def __init__(self,Tag,ListTag=[],ListMeas=[],ListSigma=[],ListFlag=[],ListUnit=[]):
-        if (not (isnum(Tag)) and(len(ListTag)!=0) and (len(ListMeas)!=0) and (len(ListSigma)) and (len(ListFlag)!=0)):
+        if (not isinstance(Tag,int) and not  isinstance(Tag,float) and (len(ListTag)!=0) and (len(ListMeas)!=0) and (len(ListSigma)) and (len(ListFlag)!=0)):
             if (Tag in ListTag):
                 self.Tag=ListTag[ListTag.index(Tag)]
                 self.Meas=float(ListMeas[ListTag.index(Tag)])
@@ -18,7 +18,7 @@ class Sensor:
                 self.Unit=ListUnit[ListTag.index(Tag)]
             else:
                 print "Error : in ", Tag," Sensor Tag not found in the Measurement file"
-        elif ((isnum(Tag)) and(len(ListTag)==0) and (len(ListMeas)==0) and (len(ListSigma)==0) and (len(ListFlag)==0) and (len(ListUnit)==0)):
+        elif ((isinstance(Tag,int) or isinstance(Tag,float)) and(len(ListTag)==0) and (len(ListMeas)==0) and (len(ListSigma)==0) and (len(ListFlag)==0) and (len(ListUnit)==0)):
             ''' You are expected to give the concentration in mole fraction  '''
             self.Tag=[]
             self.Meas=Tag

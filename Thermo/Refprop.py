@@ -1,18 +1,9 @@
-'''
-Created on Jul 31, 2014
-
-@author: Senthil
-'''
-
-'''
-Created on 30-Jul-2014
-
-@author: admin
-'''
 import RefpropDLLInterface as Rp
-from math import log
-from math import exp
-from numpy import asarray
+# from math import log
+# from math import exp
+# from numpy import asarray
+import numpy
+import math
 #from CommonFunctions.Str2Dic import Str2Dic
 class Refprop():
     Comp=[]
@@ -91,8 +82,8 @@ class Refprop():
     #def EquilibriumConstant(self,Rxn,T,P,State):
         R=8.314 # GigaJoules/(Kgmole K)
         Temp = T + AppTemp + 273
-        #K = exp(-self.DGRxn(Rxn,T,P,State)/(R*Temp))
-        K = exp(-self.DGRxn(Rxn,T+AppTemp,State)/(R*Temp))
+        #K = math.exp(-self.DGRxn(Rxn,T,P,State)/(R*Temp))
+        K = math.exp(-self.DGRxn(Rxn,T+AppTemp,State)/(R*Temp))
         return K
         
 #     def EnthalpyStream(self,Stream):
@@ -143,7 +134,7 @@ class Refprop():
                 self.Xfrac[i.CompIndex]=Stream.CTag[i].Est
             else:
                 self.Xfrac[i.CompIndex]=0
-        sum1=sum(asarray(self.Xfrac))
+        sum1=sum(numpy.asarray(self.Xfrac))
         for i in self.Comp:
             self.Xfrac[i.CompIndex]=self.Xfrac[i.CompIndex]/sum1
         Rho,err=Rp.TPRHO(Stream.TTag.Est+273, Stream.PTag.Est, self.Xfrac, Stream.State)           

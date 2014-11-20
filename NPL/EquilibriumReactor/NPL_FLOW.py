@@ -4,7 +4,7 @@ basepath = os.path.dirname('__file__')
 filepath = os.path.abspath(os.path.join(basepath, "..",".."))
 if filepath not in sys.path:
     sys.path.append(filepath)
-from fpdf import FPDF
+
 from numpy import *
 
 from CommonFunctions.Readfile import Readfile
@@ -991,9 +991,9 @@ if __name__=="__main__":
     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
     GLR1=GLR(opt1)
     Write2File(ListStreams,'GED.csv')
-#     GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
-#     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
-#     GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
+    GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
+    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
+    GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
    
     f1=open('Residuals.csv','w') 
     Resid=[]

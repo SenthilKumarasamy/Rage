@@ -8,66 +8,136 @@ Material Balance
 [0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
+SPL1a :Pseudo Splitter to handle pressure drop across the fuel line
+Material Balance
+[0.0]
+Component Balance
+0.0,0.0,0.0,0.0,0.0,0.0,0.0,
 MIX1 :Mixer that mixes Process NG with a part of Hydrogen obtained from PSA
 Material Balance
 [0.0]
 Component Balance
--1.38777878078e-14,1.7763568394e-12,-2.83106871279e-15,-1.57512891619e-15,-2.4841240176e-15,-2.74447131687e-13,-1.45261580542e-12,-1.0685896612e-15,
+-3.96127575186e-12,-2.85882428841e-15,-4.8017145815e-15,-5.24025267623e-13,-1.949829187e-15,-5.97299987248e-14,4.58300064565e-12,-3.66373598126e-15,
+HEX1 :Heat Exchanger E-2, which pre-heats the feed before mixing with steam
+Material Balance
+[0.0, 0.0]
+Component Balance
+0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
 MIX2 :Mixer that mixes steam with the feed to pre-reformer
+Material Balance
+[2.8421709430404007e-14]
+Component Balance
+4.26636503903e-12,6.53643805748e-15,1.19626530903e-14,1.0595968547e-12,4.45476988631e-15,-5.11590769747e-13,1.31006316906e-13,-5.02353714182e-12,1.36279876273e-14,
+HEAT1 :Heater that heats the feed to pre-reformer (Located inside the furnace)
 Material Balance
 [0.0]
 Component Balance
-2.12052597703e-14,-1.97530880541e-12,5.05151476204e-15,2.42167397246e-15,4.02455846427e-15,4.00568467285e-13,1.35091937636e-12,1.64798730218e-15,1.13686837722e-13,
+0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
 REX1 :Pre-Reformer
 Material Balance
 []
 Component Balance
--5.36459765499e-13,-2.83106871279e-15,-1.97064586871e-15,-1.82254211722e-12,2.0285995106e-12,3.12638803734e-13,2.10942374679e-15,2.42861286637e-16,3.59712259979e-14,1.66533453694e-16,4.66293670343e-15,
+-6.85562717706e-15,-6.73239242133e-13,-2.79243295154e-12,-4.77395900589e-15,3.60067531346e-12,-1.42108547152e-14,-6.86950496487e-16,-9.54791801178e-14,-4.64905891562e-16,-1.29896093881e-14,-5.82867087928e-15,
 REX1a :Pre-Reformer
 Material Balance
 []
 Component Balance
-5.40012479178e-13,3.1918911958e-15,7.1054273576e-15,1.91668902971e-12,-2.0872192863e-12,-3.65929508916e-13,5.88418203051e-15,7.88258347484e-15,
+7.93809462607e-15,6.71462885293e-13,2.53930210192e-12,-4.17443857259e-14,-3.69393404753e-12,5.06261699229e-13,3.04201108747e-14,2.44249065418e-14,
 MIX3 :Mixer that mixes steam with the pre-reformer outlet stream
 Material Balance
 [0.0]
 Component Balance
-4.4408920985e-16,-2.80331313718e-15,6.30606677987e-14,2.13162820728e-14,1.70530256582e-13,
+-7.21644966006e-15,7.35522753814e-16,-3.90798504668e-14,1.42996725572e-13,1.16529008665e-12,
+HEAT2 :Heater that heats the feed to the steam reformer (Located inside the furnace)
+Material Balance
+[0.0]
+Component Balance
+0.0,0.0,0.0,0.0,0.0,
 REX2 :Steam Reformer (Located inside the furnace)
 Material Balance
 []
 Component Balance
--9.23705556488e-14,-4.16333634234e-16,-7.1054273576e-15,-3.41060513165e-13,3.41060513165e-13,1.35003119794e-13,-1.28785870857e-14,-1.11022302463e-15,
+-1.60982338571e-15,-2.84217094304e-13,-8.52651282912e-13,3.19744231092e-14,1.00897068478e-12,1.27897692437e-13,-8.32667268469e-14,-9.99200722163e-15,
+HEX2 :RG Boiler (E-1)
+Material Balance
+[0.0, 0.0]
+Component Balance
+0.0,0.0,0.0,0.0,0.0,
 REX3 :HT Shift Reactor
 Material Balance
 []
 Component Balance
-4.61852778244e-14,0.0,-4.97379915032e-14,-3.5527136788e-14,6.39488462184e-14,-3.5527136788e-15,-5.3290705182e-15,
+0.0,1.52766688188e-13,-1.4921397451e-13,-1.4921397451e-13,1.4921397451e-13,0.0,-3.57491813929e-14,
+HEX3 :Boiler feed water preheater (E-16)
+Material Balance
+[0.0, 0.0]
+Component Balance
+0.0,0.0,0.0,0.0,0.0,
 REX4 :LT Shift Reactor
 Material Balance
 []
 Component Balance
-4.4408920985e-14,0.0,-3.64153152077e-14,-4.35207425653e-14,1.50990331349e-14,3.5527136788e-15,-7.54951656745e-15,
+0.0,1.24344978758e-13,-1.46549439251e-13,-1.32338584535e-13,1.46549439251e-13,0.0,-5.21804821574e-14,
+SPL3 :splitter that splits the boiler feed water into two streams one for RG boiler and the other for FG boiler or steam drum
+Material Balance
+[0.0]
+Component Balance
+
+HEAT3 :Steam Drum or FG Boiler (Located inside the furnace)
+Material Balance
+[0.0]
+Component Balance
+
+MIX4 :Mixer that mixes stream from RG and FG Boilers
+Material Balance
+[0.0]
+Component Balance
+
 SPL4 :splitter that splits the steam from combined steam from both boilers into two streams one sent to super heater and the other sent as export steam
 Material Balance
 [0.0]
 Component Balance
 
+HEAT4 :Super-Heater located inside the furnace
+Material Balance
+[0.0]
+Component Balance
+
+SPL5 :Splitter, Splitting the super heated steam into two streams, one being fed to the pre-reformer and the other to steam-reformer
+Material Balance
+[2.8421709430404007e-14]
+Component Balance
+
+HEAT5 :Air Pre-Heater (Located inside the furnace)
+Material Balance
+[0.0]
+Component Balance
+
+SPL5a :Pseudo Splitter to handle pressure drop in the off gas stream being recycled to the furnace
+Material Balance
+[0.0]
+Component Balance
+0.0,0.0,0.0,0.0,
 MIX5 :Mixer that mixes air,fuel, and off gas from PSA
 Material Balance
 [0.0]
 Component Balance
-1.50990331349e-14,1.7763568394e-12,1.08940634291e-15,1.70002900646e-16,1.17093834628e-16,-2.67164068646e-12,-3.8369307731e-13,-7.24753590475e-13,2.05702122003e-12,-1.87627691162e-14,
+-5.39568389968e-14,-8.46545056277e-16,4.52970994047e-14,5.96145355303e-12,1.38777878078e-16,8.58688120609e-17,6.07153216592e-17,-7.04858393874e-12,-7.53175299906e-13,-1.89004367712e-12,
 REX5 :Furnace
 Material Balance
 []
 Component Balance
-9.66338120634e-13,2.27728946811e-12,-7.50333128963e-12,-1.58308921527e-11,-1.83186799063e-13,1.39888101103e-14,1.57339419271e-15,1.07205910815e-15,2.65316657533e-11,-6.62581101096e-12,2.78554956878e-13,3.23213678044e-14,
+1.78701498044e-12,-7.56017470849e-12,2.21689333557e-12,-1.74509295903e-11,4.10227407599e-13,4.8017145815e-14,-1.75859327101e-13,2.08097428178e-14,2.33407043693e-15,1.59074142747e-15,2.71356270787e-11,-6.4517280407e-12,
+HEX4 :Boiler feed water heat exchanger E3
+Material Balance
+[0.0, 0.0]
+Component Balance
+0.0,0.0,0.0,0.0,0.0,
 SEP1 :Lumped Sharp Separator that separates water from the LT shift reactor outlet
 Material Balance
-[5.6843418860808015e-14]
+[0.0]
 Component Balance
-1.11022302463e-16,1.02695629778e-15,-1.63424829225e-13,-4.83169060317e-13,6.53699316899e-13,
+3.99680288865e-15,5.3290705182e-15,-1.5916157281e-12,-5.6132876125e-13,1.84741111298e-12,
 MIX6 :Mixer that mixes fresh water make up and water from separators
 Material Balance
 [0.0]
@@ -78,16 +148,11 @@ Material Balance
 [0.0]
 Component Balance
 
-MIX7 :Mixer that mixes steam from RG and FG boilers.
-Material Balance
-[0.0]
-Component Balance
-
 SEP2 :PSA Unit
 Material Balance
-[0.0]
+[-5.6843418860808015e-14]
 Component Balance
--2.15507611756e-11,2.62048160948e-11,-1.72195591119e-13,-4.46398473741e-12,-4.39895615045e-07,
+2.67732502834e-11,-3.0659919048e-12,-2.81163980986e-14,-2.35758079725e-11,-4.18623756104e-07,
 SPL6 :Splitter that splits Hydrogen from PSA into two streams, one being sent to storage and the other mixed with the NG
 Material Balance
 [2.8421709430404007e-14]
@@ -95,6 +160,6 @@ Component Balance
 
 SPL7 :Splitter that splits Hydrogen into two streams, one being sent to AO plant and the other to filling
 Material Balance
-[0.0]
+[-2.8421709430404007e-14]
 Component Balance
 

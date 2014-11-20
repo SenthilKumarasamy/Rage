@@ -1,9 +1,9 @@
-from numpy import inf
-from numpy import array
-from numpy import zeros
-from numpy import ones
-from numpy import asarray
-from numpy import float_
+# from numpy import inf
+# from numpy import array
+# from numpy import zeros
+# from numpy import ones
+# from numpy import asarray
+# from numpy import float_
 import numpy as np
 import pyipopt
 import collections as Con
@@ -14,37 +14,15 @@ from Streams.FixedConcStream import FixedConcStream
 from Units.Splitter import Splitter
 from Units.Heater import Heater
 from Units.EquilibriumReactor import EquilibriumReactor
-from Units.EquilibriumReactor2 import EquilibriumReactor2
 from Units.ElementBalanceReactor import ElementBalanceReactor
-from Units.AdiabaticElementBalanceReactor import AdiabaticElementBalanceReactor
 from Units.HeatExchanger import HeatExchanger
 from Units.Seperator import Seperator
 from Units.Reactor import Reactor
 from Units.Mixer import Mixer
 from Units.Pump import Pump
-from numpy.core.numeric import Inf
+#from numpy.core.numeric import Inf
 
 class ipopt:
-#     ListStreams=[]
-#     ListUints=[]
-#     Xmeas=[]
-#     X=[]
-#     XFlag=[]
-#     Sigma=[]
-#     Xlen=0
-#     XLB=[]
-#     XUB=[]
-#     Glen=0
-#     GLB=[]
-#     GUB=[]
-#     Normlen=0
-#     JNorm=[]
-#     NonZeroJacoRow=[]
-#     NonZeroJacoCol=[]
-#     nnzj=0
-#     nnzh=0
-#     CFlag=5
-
     def __init__(self,ListStreams,ListUnits,CFlag=5,PrintOpt=0,Xtol=1e-6,iter=100):
         self.XFlag=[]
         self.X=[]
@@ -81,7 +59,7 @@ class ipopt:
         #self.nlp.num_option('constr_viol_tol',1e-4)
         #nlp.str_option('expect_infeasible_problem','yes')
         #nlp.str_option('start_with_resto','yes')
-        self.X0 = asarray(self.Xmeas,dtype=float_)
+        self.X0 = np.asarray(self.Xmeas,dtype=np.float_)
         self.Validation()
         self.ExitFlag={}
         self.Xopt, self.zl, self.zu, self.constraint_multipliers, self.obj, self.status = self.nlp.solve(self.X0)
@@ -176,8 +154,6 @@ class ipopt:
             
             elif (isinstance(i,ElementBalanceReactor)):
                 s=0
-            elif (isinstance(i,AdiabaticElementBalanceReactor)):
-                s=0
             elif (isinstance(i,EquilibriumReactor)):
                 for j in i.Rxn: #modified
                     self.XFlag.append(0)
@@ -206,10 +182,10 @@ class ipopt:
                 quit()
     #-------------------------------------------------------------------
         self.Xlen=len(self.XFlag)
-        #self.XLB=asarray(self.X)*0.9#
-        self.XLB=zeros((self.Xlen))
-        #self.XUB=asarray(self.X)*1.1#
-        self.XUB=ones((self.Xlen))*inf
+        #self.XLB=np.asarray(self.X)*0.9#
+        self.XLB=np.zeros((self.Xlen))
+        #self.XUB=np.asarray(self.X)*1.1#
+        self.XUB=np.ones((self.Xlen))*np.inf
         for i in self.ListStreams:
             if (isinstance(i,Material_Stream) or isinstance(i,FixedConcStream)):
                 for j,val in enumerate(i.CTag.keys()):
@@ -244,8 +220,8 @@ class ipopt:
     def ConstraintBounds(self):
         Glen=0
         Normlen=0
-        self.GLB=zeros((self.Glen))
-        self.GUB=zeros((self.Glen))
+        self.GLB=np.zeros((self.Glen))
+        self.GUB=np.zeros((self.Glen))
         for i in self.ListStreams:
             if ((isinstance(i,Material_Stream)) and (self.CFlag==5 or self.CFlag==6 or self.CFlag==7)):
                 Glen=Glen+1
@@ -321,7 +297,7 @@ class ipopt:
         return row,col,Nrow+1
     
     def JacoNorm(self):
-        self.JNorm=zeros((self.Normlen,self.Xlen))
+        self.JNorm=np.zeros((self.Normlen,self.Xlen))
         k=-1
         for i in self.ListStreams:
             if (isinstance(i,Material_Stream)):
@@ -340,63 +316,63 @@ class ipopt:
         for i in self.ListUints:
             if (self.CFlag==1):
                 row1,col1=i.MaterialBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenMatRes#1
             elif (self.CFlag==2 or self.CFlag==5):
                 row1,col1=i.MaterialBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenMatRes#1
                 
                 row1,col1=i.ComponentBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenCompRes
                 
 #                 row1,col1=i.PressureBalJacoNZP()
-#                 row.extend(asarray(row1)+StartRow)
+#                 row.extend(np.asarray(row1)+StartRow)
 #                 col.extend(col1)
 #                 StartRow=StartRow + i.LenPreRes
             
             elif (self.CFlag==3 or self.CFlag==6):
                 row1,col1=i.MaterialBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenMatRes
                 
                 row1,col1=i.ComponentBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenCompRes
                 
                 row1,col1=i.EnergyBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenEneRes#1
             elif (self.CFlag==4 or self.CFlag==7):
                 row1,col1=i.MaterialBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenMatRes#1
                 
                 row1,col1=i.ComponentBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenCompRes
                 
                 row1,col1=i.EnergyBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenEneRes#1
                 
                 row1,col1=i.PressureBalJacoNZP()
-                row.extend(asarray(row1)+StartRow)
+                row.extend(np.asarray(row1)+StartRow)
                 col.extend(col1)
                 StartRow=StartRow + i.LenPreRes
         
-        self.NonZeroJacoRow=asarray(row)
-        self.NonZeroJacoCol=asarray(col)
+        self.NonZeroJacoRow=np.asarray(row)
+        self.NonZeroJacoCol=np.asarray(col)
 
     def NonZeroHessObjRowCol(self):
 #         NZP=[]
@@ -470,19 +446,19 @@ class ipopt:
             if (i[0]>=i[1]):
                 UniqueSymNZP.append(i)
         List=map(list,zip(* UniqueSymNZP))
-        self.NonZeroHessRow=asarray(List[0])
-        self.NonZeroHessCol=asarray(List[1])
+        self.NonZeroHessRow=np.asarray(List[0])
+        self.NonZeroHessCol=np.asarray(List[1])
         
 
     def Dic2Mat(self,Dic):
-        Mat=zeros((self.Xlen,self.Xlen),dtype=float_)
+        Mat=np.zeros((self.Xlen,self.Xlen),dtype=np.float_)
         for i in Dic.keys():
             Mat[i[0],i[1]]=Dic[i]
         return Mat
     
     def Hessian(self,X, lamda, obj_factor, flag, user_data = None):
         if flag:
-            return (array(self.NonZeroHessRow), array(self.NonZeroHessCol))
+            return (np.array(self.NonZeroHessRow), np.array(self.NonZeroHessCol))
         else:
             self.DeconstructX(X)
             if (self.CFlag not in [1,2,5]):
@@ -527,7 +503,7 @@ class ipopt:
                     Nlamda=Nlamda+i.LenPreRes
             for i in range(len(self.NonZeroHessRow)):
                 He.append(Mat[self.NonZeroHessRow[i]][self.NonZeroHessCol[i]])
-            return asarray(He,dtype=float_)
+            return np.asarray(He,dtype=np.float_)
         
     def Validation(self):
         print'-------------Printing the problem-----------------------------'
@@ -761,10 +737,10 @@ class ipopt:
 
     def obj_grad(self,X,user_data=None):
         assert len(X)==self.Xlen
-#         SumG=zeros((self.Xlen),dtype=float_)
+#         SumG=np.zeros((self.Xlen),dtype=np.float_)
 #         for i in range(self.Xlen):
 #             SumG[i]=2*self.XFlag[i]*(X[i]-self.Xmeas[i])/self.Sigma[i]**2
-        SumG=zeros((self.Xlen),dtype=float_)
+        SumG=np.zeros((self.Xlen),dtype=np.float_)
         self.DeconstructX(X)
         for i in self.ListStreams:
             if (isinstance(i,FixedConcStream) or isinstance(i,Material_Stream)):
@@ -791,7 +767,7 @@ class ipopt:
             elif (isinstance(i,Energy_Stream)):
                 if (i.Q.Flag !=2):
                     SumG[i.Q.Xindex]=2.0*i.Q.Flag*(i.Q.Est-i.Q.Meas)/(i.Q.Sigma**2)
-        return asarray(SumG,dtype=float_)
+        return np.asarray(SumG,dtype=np.float_)
 
     def Constraints(self,X,user_data=None):
         assert len(X)==self.Xlen
@@ -819,11 +795,11 @@ class ipopt:
                 Resid.extend(i.ComponentBalRes())
                 Resid.extend(i.EnergyBalRes())
                 Resid.extend(i.PressureBalRes())
-#                 Resid.extend(asarray(i.MaterialBalRes())/i.MB_SF)
-#                 Resid.extend(asarray(i.ComponentBalRes())/i.CB_SF)
-#                 Resid.extend(asarray(i.EnergyBalRes())/i.EB_SF)
-#                 Resid.extend(asarray(i.PressureBalRes())/i.PB_SF) 
-        return asarray(Resid,dtype=float_)
+#                 Resid.extend(np.asarray(i.MaterialBalRes())/i.MB_SF)
+#                 Resid.extend(np.asarray(i.ComponentBalRes())/i.CB_SF)
+#                 Resid.extend(np.asarray(i.EnergyBalRes())/i.EB_SF)
+#                 Resid.extend(np.asarray(i.PressureBalRes())/i.PB_SF) 
+        return np.asarray(Resid,dtype=np.float_)
     
     def ConstructJaco(self,X,flag,user_data=None):
         if (flag):
@@ -836,7 +812,7 @@ class ipopt:
                         i.h=i.Therm.EnthalpyStream(i)
                         i.GradDic=i.EnthalpyGradient()
             Ja=[]
-            Jaco=zeros((self.Glen,self.Xlen))
+            Jaco=np.zeros((self.Glen,self.Xlen))
             start=0
             if (self.CFlag==5 or self.CFlag==6 or self.CFlag==7):
                 Jaco[start:self.Normlen][:]=self.JNorm
@@ -891,7 +867,7 @@ class ipopt:
 #                      start=start+ i.LenPreRes
             for i in range(len(self.NonZeroJacoRow)):
                 Ja.append(Jaco[self.NonZeroJacoRow[i]][self.NonZeroJacoCol[i]])
-            return asarray(Ja) 
+            return np.asarray(Ja) 
     
     #-------Methods called by the functions which are called by optimiser---------------------------
     def DeconstructX(self,X):
@@ -916,8 +892,6 @@ class ipopt:
 #                 i.U=X[i.UXindex]
                 s=0
             elif (isinstance(i,ElementBalanceReactor)):
-                s=0
-            elif (isinstance(i,AdiabaticElementBalanceReactor)):
                 s=0
             elif (isinstance(i,EquilibriumReactor)):
                 for k in i.Rxn: # modified
@@ -1075,7 +1049,7 @@ class ipopt:
     
                 
     def NumGrad(self,X):
-        SumG=zeros((self.Xlen),dtype=float_)
+        SumG=np.zeros((self.Xlen),dtype=np.float_)
         self.DeconstructX(X)
         for i in range(len(X)):
             dx=X[i]*0.01

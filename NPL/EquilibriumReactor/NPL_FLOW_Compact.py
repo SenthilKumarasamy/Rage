@@ -709,9 +709,9 @@ if __name__=="__main__":
     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=50000)
     GLR1=GLR(opt1)
     Write2File(ListStreams,'GED.csv')
-#     GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
-#     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=100000)
-#     GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
+    GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
+    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=100000)
+    GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
    
     f1=open('Residuals.csv','w') 
     Resid=[]
