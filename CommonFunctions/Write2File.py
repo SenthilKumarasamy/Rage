@@ -6,6 +6,7 @@ from Streams.Energy_Stream import Energy_Stream
 #  \param FileName refers to the full path of the file
 def Write2File(ListStreams,FileName,):
 	f=open(FileName,'w')
+	f.write('Tag No.' + ',' +'Measurement Flag' + ',' +'Measured Value' + ',' + 'Estimate' + ',' + 'Sigma' + ',' + 'Gross Error Flag' + ',' + 'Unit' + '\n')
 	for i in ListStreams:
 		if (isinstance(i,Material_Stream) or isinstance(i,FixedConcStream)):
 			f.write(i.Describe +'\n')

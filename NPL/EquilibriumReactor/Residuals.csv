@@ -8,7 +8,7 @@ Material Balance
 [0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-SPL1a :Pseudo Splitter to handle pressure drop across the fuel line
+SPL1b :Pseudo Splitter to handle pressure drop across the fuel line
 Material Balance
 [0.0]
 Component Balance
@@ -17,98 +17,98 @@ MIX1 :Mixer that mixes Process NG with a part of Hydrogen obtained from PSA
 Material Balance
 [0.0]
 Component Balance
--2.57016630201e-14,-3.96127575186e-12,-4.7878367937e-15,-5.24025267623e-13,-1.94635974005e-15,-2.85882428841e-15,-5.96189764224e-14,4.59010607301e-12,
-HEX1 :Heat Exchanger E-2, which pre-heats the feed before mixing with steam
+-2.57016630201e-14,4.59010607301e-12,-3.66373598126e-15,-2.85882428841e-15,-4.77395900589e-15,-5.23581178413e-13,-3.96127575186e-12,-1.94289029309e-15,
+E2 :Heat Exchanger E-2, which pre-heats the feed before mixing with steam
 Material Balance
 [0.0, 0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-MIX2 :Mixer that mixes steam with the feed to pre-reformer
+D10 :Mixer that mixes steam with the feed to pre-reformer
 Material Balance
-[0.0]
+[2.8421709430404007e-14]
 Component Balance
-5.73985303731e-14,4.2650327714e-12,1.19487753025e-14,1.05870867628e-12,4.44436154545e-15,-5.11590769747e-13,1.31006316906e-13,6.52256026967e-15,-5.03774799654e-12,
-HEAT1 :Heater that heats the feed to pre-reformer (Located inside the furnace)
+5.73985303731e-14,-5.03774799654e-12,1.36557432029e-14,6.52256026967e-15,1.19487753025e-14,1.05826458707e-12,4.2650327714e-12,4.4478309924e-15,-5.11590769747e-13,
+E-6-3 :Heater that heats the feed to pre-reformer (Located inside the furnace)
 Material Balance
 [0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
-REX1 :Pre-Reformer
+D8-I :Pre-Reformer
 Material Balance
 []
 Component Balance
--6.80011602583e-15,-6.73239242133e-13,-2.79953837889e-12,-4.74620343027e-15,3.60600438398e-12,0.0,-5.82867087928e-15,-9.45910016981e-14,-4.57966997658e-16,-1.29896093881e-14,-6.73072708679e-16,
-REX1a :Pre-Reformer
+0.0,-6.71462885293e-13,-6.85562717706e-15,-4.74620343027e-15,-2.79243295154e-12,3.58824081559e-12,-5.82867087928e-15,-6.73072708679e-16,-9.41469124882e-14,-4.6143644461e-16,-1.29896093881e-14,
+D8-II :Pre-Reformer
 Material Balance
 []
 Component Balance
-7.91033905045e-15,6.73239242133e-13,2.5472957077e-12,-4.35207425653e-14,-3.70192765331e-12,5.13367126587e-13,3.00870439673e-14,2.44249065418e-14,
-MIX3 :Mixer that mixes steam with the pre-reformer outlet stream
+5.00044450291e-13,6.71462885293e-13,7.91033905045e-15,-4.35207425653e-14,2.53663756666e-12,-3.68505226334e-12,3.03090885723e-14,2.43138842393e-14,
+D14 :Mixer that mixes steam with the pre-reformer outlet stream
 Material Balance
 [0.0]
 Component Balance
--7.21644966006e-15,7.35522753814e-16,-3.90798504668e-14,1.44773082411e-13,1.10844666779e-12,
-HEAT2 :Heater that heats the feed to the steam reformer (Located inside the furnace)
+-1.20792265079e-12,7.49400541622e-16,-7.18869408445e-15,1.44773082411e-13,-3.19744231092e-14,
+E-6-2 :Heater that heats the feed to the steam reformer (Located inside the furnace)
 Material Balance
 [0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,
-REX2 :Steam Reformer (Located inside the furnace)
+D7 :Steam Reformer (Located inside the furnace)
 Material Balance
 []
 Component Balance
--1.63757896132e-15,-2.84217094304e-13,-9.09494701773e-13,3.19744231092e-14,1.03739239421e-12,1.35003119794e-13,-8.2822637637e-14,-9.99200722163e-15,
-HEX2 :RG Boiler (E-1)
+1.20792265079e-13,-2.98427949019e-13,-1.63757896132e-15,3.19744231092e-14,-8.52651282912e-13,1.02318153949e-12,-8.3044682242e-14,-9.99200722163e-15,
+E-1 :RG Boiler (E-1)
 Material Balance
 [0.0, 0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,
-REX3 :HT Shift Reactor
+D2 :HT Shift Reactor
 Material Balance
 []
 Component Balance
-0.0,1.4921397451e-13,-2.13162820728e-13,-1.4921397451e-13,1.27897692437e-13,0.0,-3.59712259979e-14,
-HEX3 :Boiler feed water preheater (E-16)
+0.0,1.52766688188e-13,-2.77555756156e-17,-1.56319401867e-13,-1.70530256582e-13,1.70530256582e-13,-3.59712259979e-14,
+E16 :Boiler feed water preheater (E-16)
 Material Balance
 [0.0, 0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,
-REX4 :LT Shift Reactor
+D20 :LT Shift Reactor
 Material Balance
 []
 Component Balance
-2.77555756156e-17,1.25233157178e-13,-8.26005930321e-14,-1.25233157178e-13,1.67865721323e-13,0.0,-5.21804821574e-14,
+1.7763568394e-15,1.25233157178e-13,2.77555756156e-17,-1.14575016141e-13,-1.42996725572e-13,1.14575016141e-13,-5.26245713672e-14,
 SPL3 :splitter that splits the boiler feed water into two streams one for RG boiler and the other for FG boiler or steam drum
 Material Balance
-[0.0]
+[-5.6843418860808015e-14]
 Component Balance
 
-HEAT3 :Steam Drum or FG Boiler (Located inside the furnace)
+F-4 :Steam Drum or FG Boiler (Located inside the furnace)
 Material Balance
 [0.0]
 Component Balance
 
 MIX4 :Mixer that mixes stream from RG and FG Boilers
 Material Balance
-[0.0]
+[-5.6843418860808015e-14]
 Component Balance
 
 SPL4 :splitter that splits the steam from combined steam from both boilers into two streams one sent to super heater and the other sent as export steam
 Material Balance
-[0.0]
+[-5.6843418860808015e-14]
 Component Balance
 
-HEAT4 :Super-Heater located inside the furnace
+E-6-1 :Super-Heater located inside the furnace
 Material Balance
 [0.0]
 Component Balance
 
 SPL5 :Splitter, Splitting the super heated steam into two streams, one being fed to the pre-reformer and the other to steam-reformer
 Material Balance
-[2.8421709430404007e-14]
+[0.0]
 Component Balance
 
-HEAT5 :Air Pre-Heater (Located inside the furnace)
+E-9 :Air Pre-Heater (Located inside the furnace)
 Material Balance
 [0.0]
 Component Balance
@@ -122,22 +122,22 @@ MIX5 :Mixer that mixes air,fuel, and off gas from PSA
 Material Balance
 [0.0]
 Component Balance
--5.40678612992e-14,-8.46545056277e-16,4.54081217072e-14,5.95434812567e-12,1.38777878078e-16,8.50014503229e-17,5.89805981832e-17,-7.04858393874e-12,-7.53175299906e-13,-1.87583282241e-12,
-REX5 :Furnace
+3.76232378585e-12,-5.39568389968e-14,-8.60422844084e-16,4.54081217072e-14,5.95434812567e-12,1.38777878078e-16,8.58688120609e-17,5.98479599212e-17,-7.04858393874e-12,-7.53175299906e-13,
+Fur :Furnace
 Material Balance
 []
 Component Balance
-2.20268248086e-12,-1.74225078808e-11,1.79056769412e-12,-7.56017470849e-12,4.10227407599e-13,4.8017145815e-14,-1.75859327101e-13,2.08028039239e-14,2.33407043693e-15,1.59160878921e-15,2.7142732506e-11,-6.4517280407e-12,
-HEX4 :Boiler feed water heat exchanger E3
+1.80833126251e-12,2.18847162614e-12,-1.74225078808e-11,-7.61701812735e-12,-6.45528075438e-12,4.10227407599e-13,4.80310236028e-14,-1.75859327101e-13,2.08097428178e-14,2.33493779866e-15,1.59160878921e-15,2.71356270787e-11,
+E3 :Boiler feed water heat exchanger E3
 Material Balance
 [0.0, 0.0]
 Component Balance
 0.0,0.0,0.0,0.0,0.0,
 SEP1 :Lumped Sharp Separator that separates water from the LT shift reactor outlet
 Material Balance
-[-5.6843418860808015e-14]
+[0.0]
 Component Balance
-3.96904731303e-15,5.10702591328e-15,-1.64845914696e-12,-5.68434188608e-13,1.84741111298e-12,
+3.21520587931e-13,5.10702591328e-15,3.96904731303e-15,-5.6132876125e-13,-1.62003743753e-12,
 MIX6 :Mixer that mixes fresh water make up and water from separators
 Material Balance
 [0.0]
@@ -145,14 +145,14 @@ Component Balance
 
 SPL8 :Splitter that splits Hydrogen into two streams, one being sent to AO plant and the other to filling
 Material Balance
-[0.0]
+[5.6843418860808015e-14]
 Component Balance
 
-SEP2 :PSA Unit
+PSA :PSA Unit
 Material Balance
 [0.0]
 Component Balance
-2.68585154117e-11,-2.35615971178e-11,-3.0659919048e-12,-2.8088642523e-14,-4.18623727683e-07,
+-2.35615971178e-11,2.68016719929e-11,-1.4699352846e-13,-3.06776826164e-12,-4.18623841369e-07,
 SPL6 :Splitter that splits Hydrogen from PSA into two streams, one being sent to storage and the other mixed with the NG
 Material Balance
 [0.0]
@@ -160,6 +160,6 @@ Component Balance
 
 SPL7 :Splitter that splits Hydrogen into two streams, one being sent to AO plant and the other to filling
 Material Balance
-[0.0]
+[-2.8421709430404007e-14]
 Component Balance
 
