@@ -7,6 +7,7 @@ from numpy import zeros
 from numpy import asarray
 from numpy.linalg import pinv
 from numpy import dot
+from Sensor.Sensor import Sensor 
 class Reactor:
     def __init__(self,Name,Rstrm,Pstrm,Qstrm,Rxn,ExoEndoFlag=1,dp=0):
 #===================Validation Starts======================================
@@ -50,6 +51,14 @@ class Reactor:
             if (i not in Pstrm.CTag.keys()):
                 print 'One of the products of a reaction is not present in the product stream of a reactor'
                 exit()
+        RP=[]
+        RP.extend(R)
+        RP.extend(P)
+        Cinlet=Rstrm.CTag.keys()
+        Coutlet=Pstrm.CTag.keys()
+        if ((set(Cinlet)-set(RP))!=set(set(Coutlet)-set(RP))):
+            print 'Components present in the inlet and outlet streams are not matching', self.Name
+            exit()
 #====================================Validation ends=================================        
         self.Rstrm=Rstrm
         self.Pstrm=Pstrm
@@ -107,9 +116,11 @@ class Reactor:
         B=pinv(dot(A.T,A))
         C=dot(B,A.T)
         Ext=dot(C,b)
+        self.ListParam=[]
         #for ind,i in enumerate(self.RxnExt.keys()): # to be modified
         for ind,i in enumerate(self.Rxn):
-            i.RxnExt=Ext[ind,0]        
+            i.RxnExt=Ext[ind,0]
+            self.ListParam.append(Sensor(i.RxnExt,ListFlag=[0]))        
     
     def MaterialBalRes(self):
         Resid=[]

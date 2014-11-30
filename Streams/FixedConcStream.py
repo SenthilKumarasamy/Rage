@@ -2,12 +2,13 @@ from Streams.Sensor import Sensor
 from Thermo.Refprop import Refprop
 from Component.Comp import Comp
 class FixedConcStream:
-    def __init__(self,Name,FlowTag,TempTag,PresTag,State,Therm,Cval,CUnit):
+    def __init__(self,Name,FlowTag,TempTag,PresTag,State,Therm,Cval,CUnit,Describe=[]):
         self.FTag=FlowTag
         self.TTag=TempTag
         self.PTag=PresTag
         self.State=State
         self.Name=Name
+        self.Describe=Describe
         self.h=0
         self.Therm=Therm
         self.CTag={}

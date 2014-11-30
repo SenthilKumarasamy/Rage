@@ -1,19 +1,16 @@
 import sys
 import os
-basepath = os.path.dirname('__file__')
+basepath = os.path.dirname(__file__)
 filepath = os.path.abspath(os.path.join(basepath, "..",".."))
 if filepath not in sys.path:
     sys.path.append(filepath)
-    
-import Tkinter
-import tkFileDialog
-
+from fpdf import FPDF
 from numpy import *
+
 from CommonFunctions.Readfile import Readfile
-from CommonFunctions.ReadConfigfile import ReadConfigfile
-from CommonFunctions.GenerateGraph import GenerateGraph
 from Sensor.Sensor import Sensor
 from Component.Comp import Comp
+from Thermo.IdealGas import IdealGas
 from Reaction.Reaction import Reaction
 from Streams.Material_Stream import Material_Stream
 from Streams.FixedConcStream import FixedConcStream
@@ -23,12 +20,8 @@ from Units.Heater import Heater
 from Units.Mixer import Mixer
 from Units.Reactor import Reactor
 from Units.EquilibriumReactor import EquilibriumReactor
-from Units.SteamReformer import SteamReformer
-from Units.PreReformer import PreReformer
-from Units.ShiftReactor import ShiftReactor
 from Units.HeatExchanger import HeatExchanger
 from Units.Seperator import Seperator
-from Units.PSA import PSA
 from Units.Splitter import Splitter
 from Units.ElementBalanceReactor import ElementBalanceReactor
 from optim.ipopt import ipopt
@@ -37,20 +30,16 @@ from CommonFunctions.ToInternalUnits import ToInternalUnits
 from CommonFunctions.ToExternalUnits import ToExternalUnits
 from CommonFunctions.Write2File import Write2File
 from Thermo.Refprop import Refprop
-from GrossErrorDetection.GLRTest1 import GLR
-
+from GrossErrorDetection.GLRTest import GLR
 
 if __name__=="__main__":
     
     '------------------ Reading the Measurement file--------------------'
-     
-    Tkinter.Tk().withdraw() # Close the root window
-    ftypes=(("Excel files", "*.xls"),("All files", "*.*"))
-    str1 = tkFileDialog.askopenfilename(filetypes=ftypes,title="Select the file Containing measurements")    
-
-    
+    #str1="C:\\Users\\admin\\workspace\\RAGE//NPLMeas09_06_14.dat"
+    #str1="D:\\Gyandata\\Python\\RAGE\\NPLMeas09_06_14.dat"
+    #str1="C:\\Users\\Senthil\\git\\Rage\\NPLMeas09_06_14.dat"
+    str1=filepath+"\\"+"NPLMeas09_06_14.dat"
     R1=Readfile(str1)
-    R2=ReadConfigfile("Config.xls")
     '-----------------------Creating Objects--------------------------------------------'   
     
     '''Defining Components '''
@@ -71,31 +60,15 @@ if __name__=="__main__":
     ListComp=[H2,O2,CH4,CO,CO2,H2O,N2,C2H6,C3H8,C4H10,C5H12,C6H14]
     
     T1=Refprop([H2,O2,CH4,CO,CO2,H2O,N2,C2H6,C3H8,C4H10,C5H12,C6H14])
+#     T1=IdealGas([N2,H2,CH4,C2H6,C3H8],'Refprop.dat')
 
     ListStreams=[]
     ListUnits=[]
     
-    '''Stream NG1a(1) Natural gas from GAIL'''
-    FI4133=Sensor('FI4133',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    TI4140a=Sensor('TI4140a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    PI4106a=Sensor('PI4106a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    N2_NG1a=Sensor('N2_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CH4_NG1a=Sensor('CH4_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C2H6_NG1a=Sensor('C2H6_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C3H8_NG1a=Sensor('C3H8_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C4H10_NG1a=Sensor('C4H10_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C5H12_NG1a=Sensor('C5H12_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    C6H14_NG1a=Sensor('C6H14_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CO2_NG1a=Sensor('CO2_NG1a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CTag={CH4:CH4_NG1a,N2:N2_NG1a,C2H6:C2H6_NG1a,C3H8:C3H8_NG1a,C4H10:C4H10_NG1a,CO2:CO2_NG1a,C5H12:C5H12_NG1a,C6H14:C6H14_NG1a}
-    StrmNG1a=Material_Stream('StrmNG1a',FI4133,TI4140a,PI4106a,2,T1,CTag)
-    StrmNG1a.Describe='Natural Gas from GAIL'
-    ListStreams.append(StrmNG1a)
-    
     '''Stream NG1(1) Natural gas from GAIL'''
     FI4130=Sensor('FI4130',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI4140=Sensor('TI4140',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    PI4106=Sensor('PI4106',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    PIC4106=Sensor('PIC4106',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_NG1=Sensor('N2_NG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CH4_NG1=Sensor('CH4_NG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     C2H6_NG1=Sensor('C2H6_NG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -105,14 +78,11 @@ if __name__=="__main__":
     C6H14_NG1=Sensor('C6H14_NG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO2_NG1=Sensor('CO2_NG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={CH4:CH4_NG1,N2:N2_NG1,C2H6:C2H6_NG1,C3H8:C3H8_NG1,C4H10:C4H10_NG1,CO2:CO2_NG1,C5H12:C5H12_NG1,C6H14:C6H14_NG1,}
-    StrmNG1=Material_Stream('StrmNG1',FI4130,TI4140,PI4106,2,T1,CTag)
+    #CTag={CH4:0.92,N2:0.08}
+    #StrmNG1=FixedConcStream('StrmNG1',FI4130,TI4140,PIC4107,2,T1,CTag,'xfrac')
+    StrmNG1=Material_Stream('StrmNG1',FI4130,TI4140,PIC4106,2,T1,CTag)
     StrmNG1.Describe='Natural Gas from GAIL'
     ListStreams.append(StrmNG1)
-    
-    ''' Defining Splitter SPL1a'''
-    SPL1a=Splitter('SPL1a',StrmNG1a,[StrmNG1])
-    SPL1a.Describe='Splitter that splits the NG from GAIL into one  stream in order to handle multiple flow sensors'
-    ListUnits.append(SPL1a)       
                              
     '''Defining Stream NG2(11) Fuel to Furnace'''
     FI4131=Sensor('FI4131',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -127,6 +97,8 @@ if __name__=="__main__":
     C6H14_NG2=Sensor('C6H14_NG2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO2_NG2=Sensor('CO2_NG2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={N2:N2_NG2,CH4:CH4_NG2,C2H6:C2H6_NG2,C3H8:C3H8_NG2,C4H10:C4H10_NG2,CO2:CO2_NG2,C5H12:C5H12_NG2,C6H14:C6H14_NG2}
+    #CTag={CH4:0.92,N2:0.08}
+    #StrmNG2=FixedConcStream('StrmNG2',FI4131,TU_NG2,PU_NG2,2,T1,CTag,'xfrac')
     StrmNG2=Material_Stream('StrmNG2',FI4131,TU_NG2,PU_NG2,2,T1,CTag)
     StrmNG2.Describe='Natural Gas sent to furnace as fuel'
     ListStreams.append(StrmNG2)
@@ -134,7 +106,7 @@ if __name__=="__main__":
     ''' Defining Stream NG3 (3) NG to Desulphurization uint'''
     FI4132=Sensor('FI4132',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_NG3=Sensor('TU_NG3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    PI4107=Sensor('PI4107',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    PIC4107=Sensor('PIC4107',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_NG3=Sensor('N2_NG3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CH4_NG3=Sensor('CH4_NG3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     C2H6_NG3=Sensor('C2H6_NG3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -144,7 +116,9 @@ if __name__=="__main__":
     C6H14_NG3=Sensor('C6H14_NG3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO2_NG3=Sensor('CO2_NG3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={N2:N2_NG3,CH4:CH4_NG3,C2H6:C2H6_NG3,C3H8:C3H8_NG3,C4H10:C4H10_NG3,CO2:CO2_NG3,C5H12:C5H12_NG3,C6H14:C6H14_NG3}
-    StrmNG3=Material_Stream('StrmNG3',FI4132,TU_NG3,PI4107,2,T1,CTag)
+    #CTag={CH4:0.92,N2:0.08}
+    #StrmNG3=FixedConcStream('StrmNG3',FI4132,TU_NG3,PU_NG3,2,T1,CTag,'xfrac')
+    StrmNG3=Material_Stream('StrmNG3',FI4132,TU_NG3,PIC4107,2,T1,CTag)
     StrmNG3.Describe='Natural Gas to be mixed with Hydrogen for desulpurisation'
     ListStreams.append(StrmNG3)
                             
@@ -156,7 +130,7 @@ if __name__=="__main__":
     '''Defining Stream NG2a(11) Fuel to Furnace'''
     FU_NG2a=Sensor('FU_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_NG2a=Sensor('TU_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    PI4116=Sensor('PI4116',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    PIC4116=Sensor('PIC4116',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_NG2a=Sensor('N2_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CH4_NG2a=Sensor('CH4_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     C2H6_NG2a=Sensor('C2H6_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -166,19 +140,27 @@ if __name__=="__main__":
     C6H14_NG2a=Sensor('C6H14_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO2_NG2a=Sensor('CO2_NG2a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={N2:N2_NG2a,CH4:CH4_NG2a,C2H6:C2H6_NG2a,C3H8:C3H8_NG2a,C4H10:C4H10_NG2a,CO2:CO2_NG2a,C5H12:C5H12_NG2a,C6H14:C6H14_NG2a}
-    StrmNG2a=Material_Stream('StrmNG2a',FU_NG2a,TU_NG2a,PI4116,2,T1,CTag)
+    #CTag={CH4:0.92,N2:0.08}
+    #StrmNG2a=FixedConcStream('StrmNG2a',FU_NG2a,TU_NG2a,PIC4116,2,T1,CTag,'xfrac')
+    StrmNG2a=Material_Stream('StrmNG2a',FU_NG2a,TU_NG2a,PIC4116,2,T1,CTag)
     StrmNG2a.Describe='Natural Gas sent to furnace as fuel (Pseudo-Stream to handle Pressure Drop)'
     ListStreams.append(StrmNG2a)
                       
-    ''' Defining Splitter SPL1b'''
-    SPL1b=Splitter('SPL1b',StrmNG2,[StrmNG2a],dp=[3100])
-    SPL1b.Describe='Pseudo Splitter to handle pressure drop across the fuel line'
-    ListUnits.append(SPL1b)                    
+    ''' Defining Splitter SPL1a'''
+    SPL1a=Splitter('SPL1a',StrmNG2,[StrmNG2a],dp=[3100])
+    SPL1a.Describe='Pseudo Splitter to handle pressure drop across the fuel line'
+    ListUnits.append(SPL1a)                    
                                
     '''Defining Stream H1 (12)'''
     FIC3103=Sensor('FIC3103',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI3156=Sensor('TI3156',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PIC3150=Sensor('PIC3150',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     H2_H1=Sensor('H2_H1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CH4_H1=Sensor('CH4_H1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CO_H1=Sensor('CO_H1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CO2_H1=Sensor('CO2_H1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CTag2={H2:H2_H1,CH4:CH4_H1,CO:CO_H1,CO2:CO2_H1}
+#     StrmH1=Material_Stream('StrmH1',FIC3103,TI3156,PIC3150,2,T1,CTag2)
     CTag={H2:1}
     StrmH1=FixedConcStream('StrmH1',FIC3103,TI3156,PIC3150,2,T1,CTag,'xfrac')
     StrmH1.Describe='Hydrogen from PSA unit to be mixed with NG for desulphurisation'
@@ -256,9 +238,9 @@ if __name__=="__main__":
     ListStreams.append(StrmHT2)
                                        
     '''Defining Heat Exchanger HEX1'''
-    E2=HeatExchanger('E2',StrmHT1,StrmHT2,StrmNG4,StrmNG5,Type=0)
-    E2.Describe='Heat Exchanger E-2, which pre-heats the feed before mixing with steam'
-    ListUnits.append(E2)
+    HEX1=HeatExchanger('HEX1',StrmHT1,StrmHT2,StrmNG4,StrmNG5,Type=0)
+    HEX1.Describe='Heat Exchanger E-2, which pre-heats the feed before mixing with steam'
+    ListUnits.append(HEX1)
                                 
     '''Defining Stream ST1 (19) steam mixed with NG before pre-reformer'''
     FIC3104=Sensor('FIC3104',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -289,9 +271,9 @@ if __name__=="__main__":
     ListStreams.append(StrmNS1)
                                      
     ''' Defining MIX2 (D-10)'''
-    D10=Mixer('D10',[StrmNG5,StrmST1],StrmNS1)
-    D10.Describe='Mixer that mixes steam with the feed to pre-reformer'
-    ListUnits.append(D10)
+    MIX2=Mixer('MIX2',[StrmNG5,StrmST1],StrmNS1)
+    MIX2.Describe='Mixer that mixes steam with the feed to pre-reformer'
+    ListUnits.append(MIX2)
                                 
     '''Defining Energy Stream E1'''
     E1=Energy_Stream('E1',14766496)
@@ -317,21 +299,21 @@ if __name__=="__main__":
     ListStreams.append(StrmNS2)
                                 
     ''' Defining Heat1'''
-    E63=Heater('E-6-3',StrmNS1,StrmNS2,E1,1,Dp=300)
-    E63.Describe='Heater that heats the feed to pre-reformer (Located inside the furnace)'
-    ListUnits.append(E63)
+    HEAT1=Heater('HEAT1',StrmNS1,StrmNS2,E1,1,Dp=300)
+    HEAT1.Describe='Heater that heats the feed to pre-reformer (Located inside the furnace)'
+    ListUnits.append(HEAT1)
                             
     '''Defining Stream NS3(7) (PreReformer1 outlet)'''
     FU_NS3=Sensor('FU_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI3119=Sensor('TI3119',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PI4132=Sensor('PI4132',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_NS3=Sensor('N2_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CH4_NS3=Sensor('CH4_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit) 
+    CH4_NS3=Sensor('CH4_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO2_NS3=Sensor('CO2_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     H2_NS3=Sensor('H2_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     H2O_NS3=Sensor('H2O_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO_NS3=Sensor('CO_NS3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    CTag={N2:N2_NS3,CH4:CH4_NS3,H2:H2_NS3,H2O:H2O_NS3,CO:CO_NS3,CO2:CO2_NS3}
+    CTag={N2:N2_NS3,CH4:CH4_NS3,H2:H2_NS3,H2O:H2O_NS3,CO:CO_NS3}#C2H6:C2H6_NS3,C3H8:C3H8_NS3,C4H10:C4H10_NS3,CO2:CO2_NS3,C5H12:C5H12_NS3,C6H14:C6H14_NS3
     StrmNS3=Material_Stream('StrmNS3',FU_NS3,TI3119,PI4132,2,T1,CTag)
     StrmNS3.Describe='Pre-Reformer outlet1'
     ListStreams.append(StrmNS3)
@@ -350,10 +332,10 @@ if __name__=="__main__":
      
      
                             
-    '''Defining REX1 (PreReformer1)'''
-    D8_I=Reactor('D8-I',StrmNS2,StrmNS3,[E2],[RE1,RE2,RE3,RE4,RE5],ExoEndoFlag=1)
-    D8_I.Describe='Pre-Reformer'
-    ListUnits.append(D8_I)
+    '''Definig REX1 (PreReformer1)'''
+    REX1=Reactor('REX1',StrmNS2,StrmNS3,[E2],[RE1,RE2,RE3,RE4,RE5],ExoEndoFlag=1)
+    REX1.Describe='Pre-Reformer'
+    ListUnits.append(REX1)
      
     '''Defining Stream NS3a (PreReformer2 outlet)'''
     FU_NS3a=Sensor('FU_NS3a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -366,12 +348,13 @@ if __name__=="__main__":
     CO2_NS3a=Sensor('CO2_NS3a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_NS3a=Sensor('N2_NS3a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={H2:H2_NS3a,CH4:CH4_NS3a,H2O:H2O_NS3a,CO:CO_NS3a,CO2:CO2_NS3a,N2:N2_NS3a}
-    StrmNS3a=Material_Stream('StrmNS3a',FU_NS3a,TI3119a,PI4132a,2,T1,CTag)
+    StrmNS3a=Material_Stream('StrmNS3',FU_NS3a,TI3119a,PI4132a,2,T1,CTag)
     StrmNS3a.Describe='Pre-Reformer outlet2'
     ListStreams.append(StrmNS3a)
-
-    RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1],EquTempAppFlag=2,EquTempApp=R2.EquTempApp[0])#10.1)
-    RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=R2.EquTempApp[1])#0.0)
+      
+    '''Defining the Equilibrium Reactions happening in the Pre-reformer'''
+    RE6=Reaction('RE6',[CO,H2,CH4,H2O],[-1,-3,1,1])
+    RE7=Reaction('RE7',[CO,H2O,CO2,H2],[-1,-1,1,1])
       
     '''Defining Energy Stream E2a'''
     E2a=Energy_Stream('E2a',0)
@@ -379,9 +362,9 @@ if __name__=="__main__":
     ListStreams.append(E2a)
       
     '''Definig REX1 (PreReformer2)'''
-    D8_II=PreReformer('D8-II',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],ExoEndoFlag=1)
-    D8_II.Describe='Pre-Reformer'
-    ListUnits.append(D8_II)
+    REX1a=EquilibriumReactor('REX1a',StrmNS3,StrmNS3a,[E2a],[RE6,RE7],ExoEndoFlag=1)
+    REX1a.Describe='Pre-Reformer'
+    ListUnits.append(REX1a)
                           
     '''Defining Streams ST2(18) Steam being mixed with pre reformer outlet'''
     FIC3107=Sensor('FIC3107',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -408,9 +391,9 @@ if __name__=="__main__":
     ListStreams.append(StrmNS4)
                                  
     ''' Defining Mixer MIX3'''
-    D14=Mixer('D14',[StrmNS3a,StrmST2],StrmNS4)
-    D14.Describe='Mixer that mixes steam with the pre-reformer outlet stream'
-    ListUnits.append(D14)
+    MIX3=Mixer('MIX3',[StrmNS3a,StrmST2],StrmNS4)
+    MIX3.Describe='Mixer that mixes steam with the pre-reformer outlet stream'
+    ListUnits.append(MIX3)
                                  
     '''Defining Stream NS5 (9) Feed to Steam Reformer'''
     FU_NS5=Sensor('FU_NS5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -432,9 +415,9 @@ if __name__=="__main__":
     ListStreams.append(E3)
                                   
     '''Defining Heater HEAT2'''
-    E62=Heater('E-6-2',StrmNS4,StrmNS5,E3,1)
-    E62.Describe='Heater that heats the feed to the steam reformer (Located inside the furnace)'
-    ListUnits.append(E62)
+    HEAT2=Heater('HEAT2',StrmNS4,StrmNS5,E3,1)
+    HEAT2.Describe='Heater that heats the feed to the steam reformer (Located inside the furnace)'
+    ListUnits.append(HEAT2)
                                  
     '''Defining Stream NS6 (10) Outlet of Stream Reformer'''
     FU_NS6=Sensor('FU_NS6',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -456,13 +439,14 @@ if __name__=="__main__":
     ListStreams.append(E4)
      
     '''Defining the Reactions happening in steam reformer'''
-    RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3],EquTempAppFlag=2,EquTempApp=R2.EquTempApp[2])#3.6)
-    RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=R2.EquTempApp[3])#0.0)
+    RE7a=Reaction('RE7a',[CH4,H2O,CO,H2],[-1,-1,1,3])
                                  
     '''Defining REX2 (Steam Reformer) '''
-    D7=SteamReformer('D7',StrmNS5,StrmNS6,[E4],[RE7a,RE8],ExoEndoFlag=1)
-    D7.Describe='Steam Reformer (Located inside the furnace)'
-    ListUnits.append(D7)
+    REX2=ElementBalanceReactor('REX2',StrmNS5,StrmNS6,[E4],ExoEndoFlag=1)
+    #REX2=EquilibriumReactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
+    #REX2=Reactor('REX2',StrmNS5,StrmNS6,[E4],[RE7a],ExoEndoFlag=1)
+    REX2.Describe='Steam Reformer (Located inside the furnace)'
+    ListUnits.append(REX2)
                               
     '''Defining Stream NS7 (22) Inlet to HT shift Reactor'''
     FU_NS7=Sensor('FU_NS7',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -498,9 +482,10 @@ if __name__=="__main__":
     ListStreams.append(StrmST3)
                                    
     '''Defining Heat Exchanger HEX2 (E-1) RG Boiler'''
-    E_1=HeatExchanger('E-1',StrmNS6,StrmNS7,StrmW1,StrmST3,Type=0)
-    E_1.Describe='RG Boiler (E-1)'
-    ListUnits.append(E_1)
+    HEX2=HeatExchanger('HEX2',StrmNS6,StrmNS7,StrmW1,StrmST3,Type=0)
+#     HEX2=HeatExchangerVaporizer('HEX2',StrmNS6,StrmNS7,StrmW1,StrmST3,Type=0)
+    HEX2.Describe='RG Boiler (E-1)'
+    ListUnits.append(HEX2)
                               
     '''Defining Energy Stream E5'''
     E5=Energy_Stream('E5',0)
@@ -508,12 +493,14 @@ if __name__=="__main__":
     ListStreams.append(E5)
      
     '''defining shift reaction'''
-    RE8a=Reaction('RE8a',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=R2.EquTempApp[4])#0.1)
+    RE8=Reaction('RE8',[CO,H2O,CO2,H2],[-1,-1,1,1])
                                
     '''Defining REX3 (Adiabatic Reactor) (High Temperature Shift Reactor)'''
-    D2=ShiftReactor('D2',StrmNS7,StrmHT1,[E5],[RE8a],ExoEndoFlag=-1)
-    D2.Describe='HT Shift Reactor'
-    ListUnits.append(D2)
+    REX3=ElementBalanceReactor('REX3',StrmNS7,StrmHT1,[E5],ExoEndoFlag=-1)
+    #REX3=Reactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
+    #REX3=EquilibriumReactor('REX3',StrmNS7,StrmHT1,[E5],[RE8],ExoEndoFlag=-1)
+    REX3.Describe='HT Shift Reactor'
+    ListUnits.append(REX3)
                              
     '''Defining Stream HT3 (24A)'''
     FU_HT3=Sensor('FU_HT3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -549,7 +536,7 @@ if __name__=="__main__":
     ListStreams.append(StrmW3)
                                
     ''' Defining HEX3 (E16)'''
-    HEX3=HeatExchanger('E16',StrmHT2,StrmHT3,StrmW2,StrmW3,Type=0)
+    HEX3=HeatExchanger('HEX3',StrmHT2,StrmHT3,StrmW2,StrmW3,Type=0)
     HEX3.Describe='Boiler feed water preheater (E-16)'
     ListUnits.append(HEX3)
                               
@@ -572,17 +559,16 @@ if __name__=="__main__":
     E6=Energy_Stream('E6',0)
     E6.Q.Flag=2
     ListStreams.append(E6)
-    
-    '''defining shift reaction'''
-    RE8b=Reaction('RE8b',[CO,H2O,CO2,H2],[-1,-1,1,1],EquTempAppFlag=2,EquTempApp=R2.EquTempApp[5])#19.3)
                                  
     '''Defining REX4 (Low Temp Shift Reactor) '''
-    D20=ShiftReactor('D20',StrmHT3,StrmLT1,[E6],[RE8b],ExoEndoFlag=-1)
-    D20.Describe='LT Shift Reactor'
-    ListUnits.append(D20)
+    REX4=ElementBalanceReactor('REX4',StrmHT3,StrmLT1,[E6],ExoEndoFlag=-1)
+    #REX4=EquilibriumReactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
+    #REX4=Reactor('REX4',StrmHT3,StrmLT1,[E6],[RE8],ExoEndoFlag=-1)
+    REX4.Describe='LT Shift Reactor'
+    ListUnits.append(REX4)
                                
     '''Steam Circuit Starts'''
-                                
+                               
     ''' Defining Stream W4 (feed to steam drum or FG boiler)'''
     FI3110=Sensor('FI3110',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W4=Sensor('TU_W4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -591,7 +577,7 @@ if __name__=="__main__":
     StrmW4=FixedConcStream('StrmW4',FI3110,TU_W4,PU_W4,1,T1,CTag,'xfrac')
     StrmW4.Describe='feed to steam drum or FG boiler'
     ListStreams.append(StrmW4)
-                                  
+                                 
     '''Defining Stream ST4(15)'''
     FU_ST4=Sensor('FU_ST4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_ST4=Sensor('TU_ST4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -600,22 +586,23 @@ if __name__=="__main__":
     StrmST4=FixedConcStream('StrmST4',FU_ST4,TU_ST4,PU_ST4,2,T1,CTag,'xfrac')
     StrmST4.Describe='Steam from Steam Drum or FG boiler'
     ListStreams.append(StrmST4)
-                                
+                               
     '''Defining the splitter that splits the boiler feed water into two streams one for RG boiler and the other for FG boiler or steam drum'''
     SPL3=Splitter('SPL3',StrmW3,[StrmW1,StrmW4])
     SPL3.Describe='splitter that splits the boiler feed water into two streams one for RG boiler and the other for FG boiler or steam drum'
     ListUnits.append(SPL3)
-                                
-                                
+                               
+                               
     '''Defining Energy Stream E7'''
     E7=Energy_Stream('E7',200000)
     ListStreams.append(E7)
-                                  
+                                 
     '''Defining Heater3 (Steam Drum)'''
-    F4=Heater('F-4',StrmW4,StrmST4,E7,1)
-    F4.Describe='Steam Drum or FG Boiler (Located inside the furnace)'
-    ListUnits.append(F4)
-                                
+    HEAT3=Heater('HEAT3',StrmW4,StrmST4,E7,1)
+#     HEAT3=HeaterVaporizer('HEAT3',StrmW4,StrmST4,E7,1)
+    HEAT3.Describe='Steam Drum or FG Boiler (Located inside the furnace)'
+    ListUnits.append(HEAT3)
+                               
     '''Defining Stream ST5 (16) Export steam'''
     FI3106=Sensor('FI3106',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_ST5=Sensor('TU_ST5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -624,7 +611,7 @@ if __name__=="__main__":
     StrmST5=FixedConcStream('StrmST5',FI3106,TU_ST5,PIC3114,2,T1,CTag,'xfrac')
     StrmST5.Describe='Export Steam'
     ListStreams.append(StrmST5)
-                                
+                               
     '''Defining Stream ST6(17)'''
     FU_ST6=Sensor('FU_ST6',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_ST6=Sensor('TU_ST6',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -633,7 +620,7 @@ if __name__=="__main__":
     StrmST6=FixedConcStream('StrmST6',FU_ST6,TU_ST6,PU_ST6,2,T1,CTag,'xfrac')
     StrmST6.Describe='Inlet to suher heater'
     ListStreams.append(StrmST6)
-                                
+                               
     '''Defining Combined steam Stream from FG and RG boilers'''
     FU_ST8=Sensor('FU_ST8',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_ST8=Sensor('TU_ST8',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -642,42 +629,44 @@ if __name__=="__main__":
     StrmST8=FixedConcStream('StrmST8',FU_ST8,TU_ST8,PU_ST8,2,T1,CTag,'xfrac')
     StrmST8.Describe='Combined Stream from Rg and FG Boilers'
     ListStreams.append(StrmST8)
-              
-              
+             
+             
     '''Defining Mixer that mixes Steam from RG boiler and FG boiler'''
     MIX4=Mixer('MIX4',[StrmST3,StrmST4],StrmST8)
     MIX4.Describe='Mixer that mixes stream from RG and FG Boilers'
     ListUnits.append(MIX4)
-                                
+                               
     '''Defining splitter that splits the steam from combined steam from both boilers into two streams one sent to super heater and the other sent as export steam'''
     SPL4=Splitter('SPL4',StrmST8,[StrmST6,StrmST5])
     SPL4.Describe='splitter that splits the steam from combined steam from both boilers into two streams one sent to super heater and the other sent as export steam'
     ListUnits.append(SPL4)
-                                                
-                                
+                                               
+    #'''Defining Splitter SPL2'''
+    #SPL2=Splitter('SPL2',StrmST4,[StrmST5,StrmST6])
+                               
     '''Defining Superheated steam ST7'''
     FU_ST7=Sensor('FU_ST7',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    TI3126=Sensor('TI3126',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    TIC3123=Sensor('TIC3123',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PI3116=Sensor('PI3116',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={H2O:1}
-    StrmST7=FixedConcStream('StrmST7',FU_ST7,TI3126,PI3116,2,T1,CTag,'xfrac')
+    StrmST7=FixedConcStream('StrmST7',FU_ST7,TIC3123,PI3116,2,T1,CTag,'xfrac')
     StrmST7.Describe='Super heated steam from super heater'
     ListStreams.append(StrmST7)
-                                
+                               
     '''Defining Energy Stream E8'''
     E8=Energy_Stream('E8',200000)
     ListStreams.append(E8)
-                                
+                               
     '''Defining Heater HEAT4 (SuperHeater) E-6-1'''
-    E61=Heater('E-6-1',StrmST6,StrmST7,E8,1)
-    E61.Describe='Super-Heater located inside the furnace'
-    ListUnits.append(E61)
-                                
+    HEAT4=Heater('HEAT4',StrmST6,StrmST7,E8,1)
+    HEAT4.Describe='Super-Heater located inside the furnace'
+    ListUnits.append(HEAT4)
+                               
     '''Defining Splitter SPL5 (Splitting the super heated steam into two streams, one being fed to the pre-reformer and the other to steam-reformer)'''
     SPL5=Splitter('SPL5',StrmST7,[StrmST1,StrmST2])
     SPL5.Describe='Splitter, Splitting the super heated steam into two streams, one being fed to the pre-reformer and the other to steam-reformer'
     ListUnits.append(SPL5)
-                                
+                               
     '''Defining Air Stream AR1 (13)'''
     FU_AR1=Sensor('FU_AR1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_AR1=Sensor('TU_AR1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -686,7 +675,7 @@ if __name__=="__main__":
     StrmAR1=FixedConcStream('StrmAR1',FU_AR1,TU_AR1,PU_AR1,2,T1,CTag,'xfrac')
     StrmAR1.Describe='Atmospheric air to air pre-heater'
     ListStreams.append(StrmAR1)
-                                   
+                                  
     '''Defining Air Stream AR2 (14)'''
     FIC3109=Sensor('FIC3109',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI3131=Sensor('TI3131',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -695,16 +684,16 @@ if __name__=="__main__":
     StrmAR2=FixedConcStream('StrmAR2',FIC3109,TI3131,PU_AR2,2,T1,CTag,'xfrac')
     StrmAR2.Describe='Pre-heated air to the furnace'
     ListStreams.append(StrmAR2)
-                                   
+                                  
     '''Defining Energy Stream E9''' 
     E9=Energy_Stream('E9',200000)
     ListStreams.append(E9)
-                                   
+                                  
     '''Defining HEAT5 (Air Preheater) (E-9)'''
-    HEAT5=Heater('E-9',StrmAR1,StrmAR2,E9,1)
+    HEAT5=Heater('HEAT5',StrmAR1,StrmAR2,E9,1)
     HEAT5.Describe='Air Pre-Heater (Located inside the furnace)'
     ListUnits.append(HEAT5)
-                                 
+                                
     '''Defining Stream Air-Natural Gas Mixture'''
     FU_AN1=Sensor('FU_AN1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_AN1=Sensor('TU_AN1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -724,7 +713,7 @@ if __name__=="__main__":
     StrmAN1=Material_Stream('StrmAN1',FU_AN1,TU_AN1,PU_AN1,2,T1,CTag)
     StrmAN1.Describe='Air-Natural gas- off gas mixture to furnace for burning'
     ListStreams.append(StrmAN1)
-                 
+                
     '''Defining Stream LT4 (Recycle to furnace)'''
     FIC3113=Sensor('FIC3113',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_LT4=Sensor('TU_LT4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -738,7 +727,7 @@ if __name__=="__main__":
     StrmLT4=Material_Stream('StrmLT4',FIC3113,TU_LT4,PIC3156,2,T1,CTag2)
     StrmLT4.Describe='Off gas from PSA unit'
     ListStreams.append(StrmLT4)
-                 
+                
     '''Defining Stream LT4a (Recycle to furnace)'''
     FU_LT4a=Sensor('FU_LT4a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_LT4a=Sensor('TU_LT4a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -752,30 +741,30 @@ if __name__=="__main__":
     StrmLT4a=Material_Stream('StrmLT4a',FU_LT4a,TU_LT4a,PU_LT4a,2,T1,CTag2)
     StrmLT4a.Describe='Off gas from PSA unit (Pseudo Stream to handle pressure drop)'
     ListStreams.append(StrmLT4a)
-                 
+                
     '''defining splitter SPL6 for handling pressure drop'''
     SPL5a=Splitter('SPL5a',StrmLT4,[StrmLT4a],dp=[3100])
     SPL5a.Describe='Pseudo Splitter to handle pressure drop in the off gas stream being recycled to the furnace'
     ListUnits.append(SPL5a)
-                                     
+                                    
     '''Defining MIX5 (Air fuel mixing)'''
     MIX5=Mixer('MIX5',[StrmAR2,StrmNG2a,StrmLT4a],StrmAN1)
     MIX5.Describe='Mixer that mixes air,fuel, and off gas from PSA'
     ListUnits.append(MIX5)
-                                
+                               
     '''Defining Flue gas Stream (20)'''
     FU_FG1=Sensor('FU_FG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
-    TI3129=Sensor('TI3129',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+    TI3121=Sensor('TI3121',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PIC3127=Sensor('PIC3127',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CO2_FG1=Sensor('CO2_FG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     H2O_FG1=Sensor('H2O_FG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_FG1=Sensor('N2_FG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     O2_FG1=Sensor('O2_FG1',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={CO2:CO2_FG1,H2O:H2O_FG1,N2:N2_FG1,O2:O2_FG1}
-    StrmFG1=Material_Stream('StrmFG1',FU_FG1,TI3129,PIC3127,2,T1,CTag)
+    StrmFG1=Material_Stream('StrmFG1',FU_FG1,TI3121,PIC3127,2,T1,CTag)
     StrmFG1.Describe='Flue Gas from furnace'
     ListStreams.append(StrmFG1)
-                               
+                              
     '''Defining combustion reaction'''
     RE9=Reaction('RE9',[CH4,O2,CO2,H2O],[-1,-2,1,2])
     RE10=Reaction('RE10',[C2H6,O2,CO2,H2O],[-2,-7,4,6])
@@ -785,12 +774,13 @@ if __name__=="__main__":
     RE14=Reaction('RE14',[C6H14,O2,CO2,H2O],[-2,-19,12,14])
     RE15=Reaction('RE15',[CO,O2,CO2],[-2,-1,2])
     RE16=Reaction('RE16',[H2,O2,H2O],[-2,-1,2])
-                                   
+                                  
     '''Defining Furnace'''
-    REX5=Reactor('Fur',StrmAN1,StrmFG1,[E1,E3,E4,E7,E8,E9],[RE9,RE10,RE11,RE12,RE13,RE14,RE15,RE16],ExoEndoFlag=-1)
+    REX5=Reactor('REX5',StrmAN1,StrmFG1,[E1,E3,E4,E7,E8,E9],[RE9,RE10,RE11,RE12,RE13,RE14,RE15,RE16],ExoEndoFlag=-1)
+    #REX5=ElementBalanceReactor('REX5',StrmAN1,StrmFG1,[E1,E3,E4,E7,E8,E9],ExoEndoFlag=-1)
     REX5.Describe='Furnace'
     ListUnits.append(REX5)
-                 
+                
     ''' Defining Stream W5 ()'''
     FU_W5=Sensor('FU_W5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W5=Sensor('TU_W5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -799,7 +789,7 @@ if __name__=="__main__":
     StrmW5=FixedConcStream('StrmW5',FU_W5,TU_W5,PU_W5,1,T1,CTag,'xfrac')
     StrmW5.Describe='Combined water from Separators and Fresh water make up'
     ListStreams.append(StrmW5)
-                 
+                
     '''Defining Stream LT2 ()'''
     FU_LT2=Sensor('FU_LT2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_LT2=Sensor('TU_LT2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -814,7 +804,7 @@ if __name__=="__main__":
     StrmLT2=Material_Stream('StrmLT2',FU_LT2,TU_LT2,PU_LT2,2,T1,CTag2)
     StrmLT2.Describe='Hotside outlet of E-3'
     ListStreams.append(StrmLT2)
-     
+    
     '''Defining water from de-aerator to Exchanger E3'''
     FU_W9=Sensor('FU_W9',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W9=Sensor('TU_W9',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -823,12 +813,12 @@ if __name__=="__main__":
     StrmW9=FixedConcStream('StrmW9',FU_W9,TU_W9,PU_W9,1,T1,CTag,'xfrac')
     StrmW9.Describe='Water from De-Aerator to Exchanger E3'
     ListStreams.append(StrmW9)
-                 
+                
     ''' Defining HEX4 (E3)'''
-    HEX4=HeatExchanger('E3',StrmLT1,StrmLT2,StrmW9,StrmW2,Type=0)
+    HEX4=HeatExchanger('HEX4',StrmLT1,StrmLT2,StrmW9,StrmW2,Type=0)
     HEX4.Describe='Boiler feed water heat exchanger E3'
     ListUnits.append(HEX4)
-                 
+                
     ''' Defining Stream W6 (water from seperator)'''
     FU_W6=Sensor('FU_W6',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W6=Sensor('TU_W6',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -837,7 +827,7 @@ if __name__=="__main__":
     StrmW6=FixedConcStream('StrmW6',FU_W6,TU_W6,PU_W6,1,T1,CTag,'xfrac')
     StrmW6.Describe='Water obtained from all the separators'
     ListStreams.append(StrmW6)
-                 
+                
     '''Defining Stream LT3 (To be redefined)'''
     FI3112=Sensor('FI3112',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI3142=Sensor('TI3142',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -851,12 +841,12 @@ if __name__=="__main__":
     StrmLT3=Material_Stream('StrmLT3',FI3112,TI3142,PIC3135,2,T1,CTag2)
     StrmLT3.Describe='Gas from LT shift and free from water or steam'
     ListStreams.append(StrmLT3)
-                  
+                 
     '''Defining Seperator SEP1'''
     SEP1=Seperator('SEP1',StrmLT2,[StrmLT3,StrmW6])
     SEP1.Describe='Lumped Sharp Separator that separates water from the LT shift reactor outlet'
     ListUnits.append(SEP1)
-                 
+                
     ''' Defining Stream W7 (fresh water makeup)'''
     FI4119=Sensor('FI4119',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W7=Sensor('TU_W7',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -865,12 +855,12 @@ if __name__=="__main__":
     StrmW7=FixedConcStream('StrmW7',FI4119,TU_W7,PU_W7,1,T1,CTag,'xfrac')
     StrmW7.Describe='Fresh water make up'
     ListStreams.append(StrmW7)
-                 
+                
     '''Defining Mixer MIX6'''
     MIX6=Mixer('MIX6',[StrmW6,StrmW7],StrmW5)
     MIX6.Describe='Mixer that mixes fresh water make up and water from separators'
     ListUnits.append(MIX6)
-     
+    
     '''Defining Steam venting from De-aerator'''
     FU_W8=Sensor('FU_W8',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_W8=Sensor('TU_W8',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -879,43 +869,55 @@ if __name__=="__main__":
     StrmW8=FixedConcStream('StrmW8',FU_W8,TU_W8,PU_W8,1,T1,CTag,'xfrac')
     StrmW8.Describe='Steam from the vent of De-Aerator'
     ListStreams.append(StrmW8)
-     
-     
+    
+    
     '''Defining Splitter SPL8'''
     SPL8=Splitter('SPL8',StrmW5,[StrmW8,StrmW9])
     SPL8.Describe='Splitter that splits Hydrogen into two streams, one being sent to AO plant and the other to filling'
     ListUnits.append(SPL8)
-     
-                 
-                 
+    
+                
+                
     '''Defining Stream LT5 (Hydrogen rich stream)'''
     FI3114=Sensor('FI3114',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TI3142=Sensor('TI3142',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PIC3160=Sensor('PIC3160',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     H2_LT5=Sensor('H2_LT5',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     AI3104CH4=Sensor('AI3104CH4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     AI3104CO=Sensor('AI3104CO',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     AI3104CO2=Sensor('AI3104CO2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CTag2={H2:H2_LT5,CH4:AI3104CH4,CO:AI3104CO,CO2:AI3104CO2}
+#     StrmLT5=Material_Stream('StrmLT5',FI3114,TI3142,PIC3160,2,T1,CTag2)
     CTag2={H2:1}
     StrmLT5=FixedConcStream('StrmLT5',FI3114,TI3142,PIC3160,2,T1,CTag2,'xfrac')
     StrmLT5.Describe='Hydrogen obtained from PSA unit'
     ListStreams.append(StrmLT5)
-                  
+                 
     '''Defining Seperator SEP2'''
-    SEP2=PSA('PSA',StrmLT3,[StrmLT4,StrmLT5],{(StrmLT5,H2):0.845})
+    SEP2=Seperator('SEP2',StrmLT3,[StrmLT4,StrmLT5])
     SEP2.Describe='PSA Unit'
     ListUnits.append(SEP2)
-                  
+                 
     '''Defining Stream H2 (Hydrogen stream)'''
     FI3122=Sensor('FI3122',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_H2=Sensor('TU_H2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     PIC3161=Sensor('PIC3161',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     H2_H2=Sensor('H2_H2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CH4_H2=Sensor('CH4_H2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CO_H2=Sensor('CO_H2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CO2_H2=Sensor('CO2_H2',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
+#     CTag2={H2:H2_H2,CH4:CH4_H2,CO:CO_H2,CO2:CO2_H2}
+#     StrmH2=Material_Stream('StrmH2',FIC3216,TU_H2,PU_H2,2,T1,CTag2)
     CTag2={H2:1}
     StrmH2=FixedConcStream('StrmH2',FI3122,TU_H2,PIC3161,2,T1,CTag2,'xfrac')
     StrmH2.Describe='Hydrogen to Storage'
     ListStreams.append(StrmH2)
-                  
+                 
     '''Defining Splitter SPL6'''
     SPL6=Splitter('SPL6',StrmLT5,[StrmH2,StrmH1])
     SPL6.Describe='Splitter that splits Hydrogen from PSA into two streams, one being sent to storage and the other mixed with the NG'
     ListUnits.append(SPL6)
-      
+     
     '''Defining Stream H2 (Hydrogen to AO Plant)'''
     FIC3216=Sensor('FIC3216',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_H3=Sensor('TU_H3',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -924,7 +926,7 @@ if __name__=="__main__":
     StrmH3=FixedConcStream('StrmH3',FIC3216,TU_H3,PU_H3,2,T1,CTag2,'xfrac')
     StrmH3.Describe='Hydrogen to AO plant'
     ListStreams.append(StrmH3)
-      
+     
     '''Defining Stream H2 (Hydrogen to Filling)'''
     FI1901A=Sensor('FI1901A',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     TU_H4=Sensor('TU_H4',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
@@ -933,7 +935,7 @@ if __name__=="__main__":
     StrmH4=FixedConcStream('StrmH4',FI1901A,TU_H4,PU_H4,2,T1,CTag2,'xfrac')
     StrmH4.Describe='Hydrogen to Filling'
     ListStreams.append(StrmH4)
-      
+     
     '''Defining Splitter SPL7'''
     SPL7=Splitter('SPL7',StrmH2,[StrmH3,StrmH4])
     SPL7.Describe='Splitter that splits Hydrogen into two streams, one being sent to AO plant and the other to filling'
@@ -943,37 +945,48 @@ if __name__=="__main__":
      
     '''=============Optimization starts================================'''   
     ToInternalUnits(ListStreams)
-    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=50000)
-    GLR1=GLR(opt1,R2.alpha)
+    opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=500)
+    GLR1=GLR(opt1)
     Write2File(ListStreams,'GED.csv')
     GLR1.MakeDetectedFlagUnmeasured(GLR1.Detected,GLR1.XmIndex)
     opt1=ipopt(ListStreams,ListUnits,5,5,1e-8,iter=10000)
     GLR1.RestoreDetectedFlag(GLR1.Detected,GLR1.XmIndex)
-#     
-#     f1=open('Residuals.csv','w') 
-#     Resid=[]
-#     for i in ListUnits:
-#         Resid.extend(i.MaterialBalRes())
-#         Resid.extend(i.ComponentBalRes())
-#         f1.write(i.Name +' :'+ i.Describe + '\n')
-#         f1.write('Material Balance\n')
-#         f1.write(str(i.MaterialBalRes())+'\n')
-#         f1.write('Component Balance\n')
-#         for j in i.ComponentBalRes():
-#             f1.write(str(j)+',')
-#         f1.write('\n')
-#     f1.close()
+    
+    f1=open('Residuals.csv','w') 
+    Resid=[]
+    for i in ListUnits:
+        Resid.extend(i.MaterialBalRes())
+        Resid.extend(i.ComponentBalRes())
+        f1.write(i.Name +' :'+ i.Describe + '\n')
+        f1.write('Material Balance\n')
+        f1.write(str(i.MaterialBalRes())+'\n')
+        f1.write('Component Balance\n')
+        for j in i.ComponentBalRes():
+            f1.write(str(j)+',')
+        f1.write('\n')
+        print i.Name
+        print i.MaterialBalRes(),i.ComponentBalRes()#,i.EnergyBalRes(),i.PressureBalRes()
+    f1.close()
         
     ToExternalUnits(ListStreams)
-    ftypes=(("Comma separated variable files", "*.csv"),("All files", "*.*"))
-    str1 = tkFileDialog.asksaveasfilename(filetypes=ftypes,defaultextension=".xls",initialfile="NPL_Reconciled.csv",title="Select the output file name")
-    Write2File(ListStreams,str1)      
+    Write2File(ListStreams,'AfterDroppingGESensors.csv')
+       
+    for i in ListStreams:
+        if (isinstance(i,Energy_Stream)):
+            print i.Q.Meas,'\t',i.Q.Est
+        else:
+            if (i.FTag.Flag==1):
+                print i.FTag.Xindex,'\t',i.FTag.Tag,'\t', i.FTag.Meas,'\t', i.FTag.Est
+            #print i.TTag.Xindex,'\t',i.TTag.Tag, '\t',i.TTag.Meas,'\t', i.TTag.Est
+            #print i.PTag.Xindex,'\t',i.PTag.Tag,'\t', i.PTag.Meas, '\t',i.PTag.Est
+            if (isinstance(i,Material_Stream)):
+                for j in i.CTag.keys():
+                    if (i.CTag[j].Flag!=5):
+                        print i.CTag[j].Xindex,'\t',i.CTag[j].Tag,'\t', i.CTag[j].Meas,'\t', i.CTag[j].Est
    
-    #print'The Maximum constraint violation is ',(max(asarray(Resid)))
+    print'The Maximum constraint violation is ',(max(asarray(Resid)))
     print 'Total no. of Units is ',len(ListUnits)
     print 'Total no. of Streams is ', len(ListStreams)
     print 'Total no. of variables is ',len(opt1.Xopt)
     print 'Total no of Constraints is ',opt1.Glen
-    #============================================================
-    #==================== Graph generation=======================
-    GenerateGraph(ListStreams,ListUnits)
+#     #Report(ListUnits)

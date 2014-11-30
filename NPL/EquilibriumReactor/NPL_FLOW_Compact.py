@@ -8,6 +8,7 @@ from fpdf import FPDF
 from numpy import *
 
 from CommonFunctions.Readfile import Readfile
+from CommonFunctions.GenerateGraph import GenerateGraph
 from Sensor.Sensor import Sensor
 from Component.Comp import Comp
 from Thermo.IdealGas import IdealGas
@@ -310,7 +311,7 @@ if __name__=="__main__":
     CO2_NS3a=Sensor('CO2_NS3a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     N2_NS3a=Sensor('N2_NS3a',R1.Name,R1.Meas,R1.Sigma,R1.Flag,R1.Unit)
     CTag={H2:H2_NS3a,CH4:CH4_NS3a,H2O:H2O_NS3a,CO:CO_NS3a,CO2:CO2_NS3a,N2:N2_NS3a}
-    StrmNS3a=Material_Stream('StrmNS3',FU_NS3a,TI3119a,PI4132a,2,T1,CTag)
+    StrmNS3a=Material_Stream('StrmNS3a',FU_NS3a,TI3119a,PI4132a,2,T1,CTag)
     StrmNS3a.Describe='Pre-Reformer outlet2'
     ListStreams.append(StrmNS3a)
        
@@ -750,4 +751,5 @@ if __name__=="__main__":
     print 'Total no. of Streams is ', len(ListStreams)
     print 'Total no. of variables is ',len(opt1.Xopt)
     print 'Total no of Constraints is ',opt1.Glen
+    GenerateGraph(ListStreams,ListUnits)
 #     #Report(ListUnits)

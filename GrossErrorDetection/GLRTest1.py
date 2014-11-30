@@ -19,9 +19,10 @@ from Streams.Energy_Stream import Energy_Stream
 ## This class is used to create Generalizied Likelihood Ratio (GLR) object that is used to detect Gross Errors (GE).
 class GLR():
     ## \param opt is an ipopt object.
-    def __init__(self,opt):
+    def __init__(self,opt,alpha):
         ## Stores the ipopt object.
         self.opt=opt
+        self.alpha=alpha
         
         ## \var rc stores the non zero positions of the Jacobian.
         rc=self.opt.ConstructJaco(self.opt.Xopt,True)
@@ -244,7 +245,7 @@ class GLR():
         return T
     
     def GlobalTest(self,T,n):
-        Tcrit=st.chi2.ppf(0.99,n)
+        Tcrit=st.chi2.ppf((1-self.alpha),n)
         if (T>Tcrit):
             GTResult=True
         else:
@@ -261,18 +262,22 @@ class GLR():
         for ind,i in enumerate(ToBeTested):
             Fki[:,s[1]]=Abar[:,i]
             FTemp=numpy.dot(numpy.dot(Fki.T,Vinv),r)
-            FTemp1=numpy.linalg.inv(numpy.dot(numpy.dot(Fki.T,Vinv),Fki))
-            GLRStatistic[ind]=numpy.dot(numpy.dot(FTemp.T,FTemp1),FTemp)
+            FTempa=numpy.dot(numpy.dot(Fki.T,Vinv),Fki)
+            if (numpy.linalg.matrix_rank(FTempa)==min(numpy.shape(FTempa))):
+                FTemp1=numpy.linalg.inv(FTempa)
+                #FTemp1=numpy.linalg.inv(numpy.dot(numpy.dot(Fki.T,Vinv),Fki))
+                GLRStatistic[ind]=numpy.dot(numpy.dot(FTemp.T,FTemp1),FTemp)
         ErrPos=GLRStatistic.index(max(GLRStatistic))# modified
         return ErrPos,GLRStatistic[ErrPos]
     
     def UpdateList(self,Detected,ToBeTested,PresentError):
         Detected.append(ToBeTested[PresentError])
         ToBeTested.pop(PresentError)
-        Fk=self.Abar[:,Detected]
-        s=numpy.shape(Fk)
-        if (numpy.linalg.matrix_rank(Fk)<min(s)):
-            Detected.pop(len(Detected)-1)
+#         Fk=self.Abar[:,Detected]
+#         s=numpy.shape(Fk)
+#         print numpy.linalg.matrix_rank(Fk),min(s)
+#         if (numpy.linalg.matrix_rank(Fk)<min(s)):
+#             Detected.pop(len(Detected)-1)
         return Detected,ToBeTested
     
     def WriteGLRFlag2Sensors(self,Detected,XmIndex):

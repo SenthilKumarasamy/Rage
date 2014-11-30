@@ -5,8 +5,9 @@ Created on Jun 19, 2014
 '''
 import numpy
 class Material_Stream:
-    def __init__(self,Name,FlowTag,TempTag,PresTag,State,Therm,CTag,FreeBasis=[]):
+    def __init__(self,Name,FlowTag,TempTag,PresTag,State,Therm,CTag,FreeBasis=[],Describe=''):
         self.Name=Name
+        self.Describe=''
         self.FTag=FlowTag
         self.TTag=TempTag
         self.PTag=PresTag

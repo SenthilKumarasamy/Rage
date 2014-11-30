@@ -21,21 +21,30 @@
 #  dipole moment                       debye
 #  surface tension                     N/m
 #-------------------------------------------------------------------------------
+# import sys
+# import os
+# import platform
+
 import sys
 import os
-import platform   
+basepath = os.path.dirname('__file__')
+filepath = os.path.abspath(os.path.join(basepath, "..",".."))
+if filepath not in sys.path:
+    sys.path.append(filepath)
+       
 from ctypes import *
 
 try:
     program_files=os.environ['PROGRAMFILES(X86)'] # 64 bit
 except:
     program_files=os.environ['PROGRAMFILES'] # 32 bit
-
-
+ 
+ 
 rp = windll.LoadLibrary(program_files+"\\REFPROP\\refprop.dll")
 fpath = program_files+'/refprop/'
 
-    
+# fpath=filepath+'/Thermo/'
+# rp = windll.LoadLibrary(fpath + "refprop.dll")    
 k0 = 273.15
 
 MaxComps = 20

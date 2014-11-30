@@ -166,15 +166,24 @@ class ipopt:
                         self.X.append(j.EquTempApp)
                         self.Sigma.append(1)
                         self.FBFlag.append(0)
+#                 for j in i.ListParam:
+#                     self.XFlag.append(0)
+#                     j.Xindex=len(self.XFlag)-1
+#                     self.X.append(j.Est)
+#                     self.Sigma.append(j.Sigma)
+#                     self.FBFlag.append(0)
+
                 s=0
                 
             elif (isinstance(i,Reactor)):#     or isinstance(i,EquilibriumReactor)):
-                  for j in i.Rxn: # modified
-                    self.XFlag.append(0)
-                    j.RxnExtXindex=len(self.XFlag)-1 # modified
-                    self.X.append(j.RxnExt) # modified
-                    self.Sigma.append(1)
-                    self.FBFlag.append(0)
+                for j in i.Rxn: # modified
+                  self.XFlag.append(0)
+                  j.RxnExtXindex=len(self.XFlag)-1 # modified
+                  self.X.append(j.RxnExt) # modified
+                  self.Sigma.append(1)
+                  self.FBFlag.append(0)
+
+                        
 
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
@@ -876,10 +885,13 @@ class ipopt:
                     k.RxnExt=X[k.RxnExtXindex] # modified
                     if (k.EquTempAppFlag !=2):
                         k.EquTempApp=X[k.EquTempAppXindex]
+#                 for k in i.ListParam:
+#                     k.Est=X[k.Xindex]
                 s=0
             elif (isinstance(i,Reactor)):# or isinstance(i,EquilibriumReactor)):
                 for k in i.Rxn: #modified
                     k.RxnExt=X[k.RxnExtXindex] # modified
+
             elif(not (isinstance(i,Mixer) or isinstance(i,Seperator) or isinstance(i,Heater) or isinstance(i,Pump))):
                 print "Object in the list is not defined"
                 quit()   
@@ -1010,6 +1022,7 @@ class ipopt:
             if (isinstance(i,Reactor)):
                 Pstrm.append(i.Pstrm)
         for i in self.ListStreams:
+            print i.Name
             if (not isinstance(i,Energy_Stream)):
                 if (i not in Pstrm):
                     i.TTag.Flag=2

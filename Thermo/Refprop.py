@@ -1,9 +1,9 @@
-# import sys
-# import os
-# basepath = os.path.dirname('__file__')
-# filepath = os.path.abspath(os.path.join(basepath, "..",".."))
-# if filepath not in sys.path:
-#     sys.path.append(filepath)
+import sys
+import os
+basepath = os.path.dirname('__file__')
+filepath = os.path.abspath(os.path.join(basepath, "..",".."))
+if filepath not in sys.path:
+    sys.path.append(filepath)
 
 import RefpropDLLInterface as Rp
 import numpy
@@ -11,6 +11,7 @@ import math
 class Refprop():
     Comp=[]
     def __init__(self,Comp):
+        #DBfile='/Thermo/Refprop.dat'
         DBfile='Refprop.dat'
         self.Comp=Comp
         Name=[]
@@ -21,9 +22,9 @@ class Refprop():
         MW=[]
         CompNameList=[]
         self.Xfrac=[0]*len(self.Comp)
-        #str1="C:\\Users\\Senthil\\git\\Rage\\Thermo\\" + DBfile
         #str1=filepath  + DBfile
         f=open(DBfile,'r')
+        #f=open(str1,'r')
         Lines=f.readlines()
         for i in Lines:
             Temp=i.split('\t')
@@ -47,6 +48,7 @@ class Refprop():
             ComputedS=Rp.ENTRO(25+273,[1],Rho)
             ActualS=(dHf[i.Id-1]-dGf[i.Id-1])/(25+273)
             i.Sos=ActualS - ComputedS
+            i.MFStr=MF[i.Id-1]
             i.MF=i.Str2Dic(MF[i.Id-1])
             i.MolWt=MW[i.Id-1]
         Rp.PUREFLD(0) #Resetting to mixture mode

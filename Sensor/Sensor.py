@@ -26,3 +26,11 @@ class Sensor:
             self.Sigma=1#0.01*Tag
             self.Flag=1.0
             self.Sol=Tag
+        elif ((isinstance(Tag,int) or isinstance(Tag,float)) and len(ListFlag)==1):
+            self.Tag=[]
+            self.Meas=Tag
+            self.Est=Tag
+            self.Sigma=1#0.01*Tag
+            self.Flag=ListFlag[0]
+            self.Sol=Tag
+            

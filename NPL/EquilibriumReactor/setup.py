@@ -24,7 +24,8 @@ setup(
     , options={ 
              "py2exe":  { 
                           r'includes': [r'scipy.sparse.csgraph._validation',
-                                        r'scipy.special._ufuncs_cxx']
+                                        r'scipy.special._ufuncs_cxx'],
+                          "dll_excludes": ["MSVCP90.dll", "HID.DLL", "w9xpopen.exe"],
                          } 
             }
     )
